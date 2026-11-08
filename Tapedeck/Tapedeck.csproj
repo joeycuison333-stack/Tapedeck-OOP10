@@ -9,6 +9,7 @@
     <RootNamespace>mediaPlayerPrj</RootNamespace>
     <AssemblyName>Tapedeck</AssemblyName>
     <PlatformTarget>x64</PlatformTarget>
+    <ApplicationIcon>Assets\logo.ico</ApplicationIcon>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
     <!-- Shown in the .exe file properties (Appendix E.1 step 6). Replace the placeholders. -->
