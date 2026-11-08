@@ -1,14 +1,25 @@
-// TEMPORARY Program.cs for Joey's first commit (step J1).
-// Copy this file to Tapedeck/Program.cs in the repo. It opens an empty window so `main`
-// builds before the other files exist. Joey replaces it with the real Program.cs in step J9.
 namespace mediaPlayerPrj;
 
+/// <summary>Entry point: shows the splash screen, then the player.</summary>
 internal static class Program
 {
+    /// <summary>Starts the application.</summary>
     [STAThread]
     private static void Main()
     {
+        // Any error that slips past a try-catch is shown to the user instead of crashing the demo.
+        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+        Application.ThreadException += (sender, e) =>
+            MessageBox.Show("Something went wrong:\n\n" + e.Exception.Message, TeamInfo.AppTitle,
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
+
         ApplicationConfiguration.Initialize();
-        Application.Run(new Form { Text = "Tapedeck (setup)" });
+
+        using (SplashForm splash = new SplashForm())
+        {
+            splash.ShowDialog(); // returns when the splash closes itself
+        }
+
+        Application.Run(new TapedeckForm());
     }
 }
