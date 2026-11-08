@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <RootNamespace>mediaPlayerPrj</RootNamespace>
+    <AssemblyName>Tapedeck</AssemblyName>
+    <PlatformTarget>x64</PlatformTarget>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <!-- Shown in the .exe file properties (Appendix E.1 step 6). Replace the placeholders. -->
+    <Product>Tapedeck</Product>
+    <Company>Group 3 - BSCS 2A</Company>
+    <Authors>Joey Cuison; Ammaar Azmy; Christian Maddox Rivera; Valencia Genevieve</Authors>
+    <Description>OOP10 Media Player Application Project</Description>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LibVLCSharp.WinForms" Version="3.9.0" />
+    <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.21" />
+  </ItemGroup>
+
+  <!-- The form is split into one partial file per owner; nest them under the form in Solution Explorer. -->
+  <ItemGroup>
+    <Compile Update="UI\TapedeckForm.Menu.cs;UI\TapedeckForm.Playback.cs;UI\TapedeckForm.View.cs;UI\TapedeckForm.AddMedia.cs;UI\TapedeckForm.Library.cs;UI\TapedeckForm.SortSearch.cs;UI\TapedeckForm.Favorites.cs">
+      <DependentUpon>TapedeckForm.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <!-- Every skin, logo and team photo is copied next to the .exe, so the skin loads on any computer. -->
+  <ItemGroup>
+    <None Update="Assets\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

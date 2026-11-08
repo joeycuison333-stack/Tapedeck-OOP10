@@ -1,0 +1,23 @@
+# Visual Studio / .NET (do not commit build output)
+bin/
+obj/
+publish/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+*.log
+*.tmp
+TestResults/
+packages/
+*.nupkg
+# Runtime data created next to the .exe
+Library.txt
+Favorites.txt
+# Personal media used while testing (never commit copyrighted media)
+SampleMedia/
