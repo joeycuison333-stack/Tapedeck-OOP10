@@ -62,6 +62,8 @@ Verify that Tapedeck meets all functional requirements (FR1–FR13) and non-func
 | **TC22** | FR4, FR12, FR13 – **[Negative]** Single-Item Playlist Behavior | 1. Clear library and add exactly ONE media file.<br>2. Start playback of this single item.<br>3. Click **Next** (`btnNext`) and **Previous** (`btnPrevious`).<br>4. Turn Shuffle ON (`btnShuffle`) and click **Next**.<br>5. Click column header to Sort the library (`Ctrl+1`). | `Next` and `Previous` wrap safely to index 0 (`(0+1)%1 = 0`) and replay the track without crash. In Shuffle mode, `PickRandomIndex()` detects `Playlist.Count == 1` and returns 0 without infinite loop. `SortLibrary()` detects `Playlist.Count < 2` and returns early without altering list or throwing errors. | Pending execution on `main` | Untested |
 | **TC23** | FR13 – **[Negative]** Playback Completion with Repeat Off | 1. Load 2 or more tracks. Select the LAST track in the playlist.<br>2. Ensure Shuffle is OFF and Repeat is set to `RepeatMode.Off` (`lblRepeat` shows "Off").<br>3. Play the track and seek near the very end (e.g. within 2 seconds of completion). Let it finish. | When track reaches EOF, `Player_EndReached` triggers `PlayNextOrStop()`. Because `Repeat == RepeatMode.Off` and `CurrentIndex == Playlist.Count - 1`, the player calls `Stop()`. Playback unloads, `_loadedPath` is set to null, status shows `"Stopped"`, and playback does NOT auto-restart or wrap to track 1. | Pending execution on `main` | Untested |
 | **TC24** | FR13 – Continuous Playback: Repeat All, Repeat One, and Shuffle | 1. Set Repeat to `RepeatMode.One` (`Ctrl+R` until `lblRepeat` shows "One"). Play track and seek to end.<br>2. Verify same track restarts automatically from beginning.<br>3. Cycle Repeat to `RepeatMode.All`. Play last track in list and seek to end.<br>4. Verify playback wraps and starts playing track 1 automatically.<br>5. Turn Shuffle ON (`btnShuffle` / `Ctrl+H`). Play track and seek to end. | In Repeat One, `PlayNextOrStop()` invokes `Play()` on current item. In Repeat All, `PlayNextOrStop()` invokes `Next()`, which wraps from last to first item. In Shuffle ON, a random distinct track (`PickRandomIndex()`) is chosen and played automatically upon track completion. | Pending execution on `main` | Untested |
+| **TC25** | FR1 – **[Negative]** Add File Open / Locked in Another Program | 1. Open a valid `.mp3` or `.mp4` file in another program that acquires an exclusive file lock (or opens it for writing).<br>2. In Tapedeck, click **Add** (`Ctrl+O`) and select the locked file.<br>3. Observe status and dialog reporting. | Application handles the `IOException` / file-lock sharing violation gracefully in `AddFilesAsync`. File read fails without crashing; `ShowError` reports: `"Added 0 item(s). 1 could not be read."`. Playlist remains unaffected. | Pending execution on `main` | Untested |
+| **TC26** | FR4, FR7 – **[Negative]** Play File After Parent Folder Renamed While App Closed | 1. Add a media file located in a dedicated folder (e.g. `C:\Music\Album1\track.mp3`), then close Tapedeck.<br>2. While the app is closed, rename the folder in File Explorer (e.g. to `Album1_Renamed`).<br>3. Launch Tapedeck, observe the item in `listView1`, and attempt playback (press **Play** or double-click the item). | On launch, missing path is detected (`!File.Exists`); row is shown greyed out (`Theme.MutedColor`) and counted in status. Attempting playback stops player, sets status `"File not found: {path}"`, and displays `ShowError`: `"This file was moved or deleted:\n\n{path}"` without crashing. | Pending execution on `main` | Untested |
 
 ---
 
@@ -78,13 +80,13 @@ Verify that Tapedeck meets all functional requirements (FR1–FR13) and non-func
 
 | Requirement | Description | Type | Covered By |
 |---|---|---|---|
-| **FR1** | Add mp3 and mp4 files through a file dialog (and a whole folder) | Must | TC01, TC02, TC03, TC04 |
+| **FR1** | Add mp3 and mp4 files through a file dialog (and a whole folder) | Must | TC01, TC02, TC03, TC04, TC25 |
 | **FR2** | Show title, artist, duration, file path, media type, album (audio) or resolution (video) | Must | TC05 |
 | **FR3** | Save the library to `Library.txt` and reload it when the program starts | Must | TC06, TC07, TC14 |
-| **FR4** | Play, Pause, Stop, Next, Previous, volume and seek | Must | TC08, TC09, TC10, TC11, TC13, TC15, TC22 |
+| **FR4** | Play, Pause, Stop, Next, Previous, volume and seek | Must | TC08, TC09, TC10, TC11, TC13, TC15, TC22, TC26 |
 | **FR5** | Playlist list and Now Playing area | Must | TC12 |
 | **FR6** | Search or sort by title or artist (sorting algorithm + binary search) | Should | TC16, TC17 |
-| **FR7** | Handle missing files, corrupt lines, unsupported formats, empty library | Must | TC04, TC13, TC14, TC15, TC22, TC23 |
+| **FR7** | Handle missing files, corrupt lines, unsupported formats, empty library | Must | TC04, TC13, TC14, TC15, TC22, TC23, TC25, TC26 |
 | **FR8** | Enhancement: Favorites and 1–5 star ratings, saved in `Favorites.txt` | Should | TC19, TC20 |
 | **FR9** | Splash screen: logo, title, group, section, every member's photo, name and role; closes after ~3 s or on click/key | Must | TC21 |
 | **FR10** | MenuStrip (File, Playback, Library, Help) with keyboard shortcuts calling the same methods as the buttons | Must | TC07, TC10, TC21 (plus menu invocations in TC01, TC06, TC08, TC18, TC19) |
@@ -99,3 +101,5 @@ Verify that Tapedeck meets all functional requirements (FR1–FR13) and non-func
 - **Unsupported format:** TC04 (rejects `.wav`, `.txt`, `.jpg` with warning).
 - **One-item list:** TC22 (validates Next/Previous wrap, Shuffle infinite loop avoidance, and Sort early exit).
 - **Last item with Repeat Off:** TC23 (stops playback at EOF on the last item when Repeat is Off).
+- **File locked / open in another program:** TC25 (catches IOException during read, alerts user without crash).
+- **Folder renamed while closed:** TC26 (greys out missing item on startup, displays error and halts playback without crash).
