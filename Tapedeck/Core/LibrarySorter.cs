@@ -113,5 +113,27 @@ public static class LibrarySorter
 
         return -1;
     }
-    public static int FindFirstContaining(List<MediaItem> items, string text) { return -1; }
+    public static int FindFirstContaining(List<MediaItem> items, string text)
+    {
+        if (items == null)
+        {
+            throw new ArgumentNullException(nameof(items));
+        }
+
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return -1;
+        }
+
+        for (int i = 0; i < items.Count; i++)
+        {
+            if (items[i].Title.IndexOf(text, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                items[i].Artist.IndexOf(text, StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
 }
