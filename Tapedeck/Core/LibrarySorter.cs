@@ -26,9 +26,28 @@ public enum SortKey
 public static class LibrarySorter
 {
     /// <summary>Placeholder: treats every item as equal.</summary>
-    public static int Compare(MediaItem a, MediaItem b, SortKey key) { return 0; }
+    public static int Compare(MediaItem a, MediaItem b, SortKey key)
+    {
+        return key switch
+        {
+            SortKey.Title =>
+                StringComparer.OrdinalIgnoreCase.Compare(a.Title, b.Title),
 
-    /// <summary>Placeholder: leaves the list unchanged.</summary>
+            SortKey.Artist =>
+                StringComparer.OrdinalIgnoreCase.Compare(a.Artist, b.Artist),
+
+            SortKey.AlbumOrResolution =>
+                StringComparer.OrdinalIgnoreCase.Compare(a.Extra, b.Extra),
+
+            SortKey.Duration =>
+                a.Duration.CompareTo(b.Duration),
+
+            SortKey.Rating =>
+                b.Rating.CompareTo(a.Rating),
+
+            _ => throw new ArgumentOutOfRangeException(nameof(key))
+        };
+    }
     public static void InsertionSort(List<MediaItem> items, SortKey key) { }
 
     /// <summary>Placeholder: never finds anything.</summary>
