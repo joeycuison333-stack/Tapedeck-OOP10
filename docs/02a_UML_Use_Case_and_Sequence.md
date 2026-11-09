@@ -90,3 +90,35 @@ Source: [`diagrams/use_case_diagram.puml`](diagrams/use_case_diagram.puml) (Plan
 | **Main flow** | 1. The user selects an item. 2. `ToggleFavorite` flips the ♥, or `SetRating` sets 0–5 stars. 3. The ♥ / ★ column (and Now Playing, if it is the playing item) updates. 4. The library is saved, so `Favorites.txt` keeps the change. |
 | **Alternate flow** | Favorite with nothing selected: the playing item is used; if nothing is playing either, a status message asks the user to select an item. Rating with nothing selected: a status message only. |
 
+---
+
+## 3.3 Sequence diagrams
+
+Every message in these diagrams is a real method or property in the code (`UI/TapedeckForm*.cs`, `UI/BasePlayerForm.cs`, `Data/LibraryStore.cs`, `Data/FavoritesStore.cs`, `Core/MediaFormats.cs`).
+
+### 3.3.1 User presses Play
+
+![Sequence diagram: User presses Play](diagrams/sequence_play.png)
+
+Source: [`diagrams/sequence_play.puml`](diagrams/sequence_play.puml)
+
+1. `btnPlay_Click` calls the form's `Play()` override, which calls `base.Play()` in `BasePlayerForm` (inheritance: the playback logic is written once in the base class).
+2. **alt – file is missing:** `File.Exists` returns false, so the base class calls `SetStatus` and `ShowError`. These are virtual, so the form's own versions run and the message appears in the form's status bar.
+3. **alt – file exists:** LibVLC's `MediaPlayer.Play(media)` starts the file, then the base class calls the hook `OnNowPlayingChanged(item)`. The form overrides it to fill Now Playing (`ShowNowPlaying`), redraw the list (`RefreshListView`) and highlight the row (`SelectRow`).
+4. The form swaps the Play button for Pause (`UpdatePlayPauseButtons`).
+5. **loop – every 500 ms:** the `tmrElapsed` timer calls `tmrElapsed_Tick`, which reads `ElapsedTime` (from LibVLC's `Time` in milliseconds) and shows elapsed / total time, for example `00:01:12 / 00:03:25` (FR11).
+
+### 3.3.2 Load Library.txt at start-up
+
+![Sequence diagram: Load Library.txt at start-up](diagrams/sequence_load_library.png)
+
+Source: [`diagrams/sequence_load_library.puml`](diagrams/sequence_load_library.puml)
+
+1. When the window first appears, `OnShown` calls `LoadLibraryFromFile`.
+2. The form calls `LibraryStore.Load`. **alt – first run:** there is no `Library.txt`, so an empty list comes back and no error is shown.
+3. Otherwise every line is read. **loop – each line that is not blank:** `ParseLine` checks it. **alt – valid line:** the factory `MediaFormats.Create` builds an `AudioItem` or `VideoItem`, so `LibraryStore` never checks the media type itself (polymorphism). **alt – damaged line:** it is counted in `skippedLines` and loading continues.
+4. `FavoritesStore.Apply` reads `Favorites.txt` and sets each item's favorite and rating.
+5. The form shows the items (`SetPlaylist`, `RefreshListView`). **opt – damaged lines were skipped:** `ShowError` tells the user how many.
+6. `CountMissingFiles` counts media files that were moved or deleted, and `SetStatus` shows "Loaded N item(s) ..." (or the empty-library hint).
+
+Read errors (`IOException`, `UnauthorizedAccessException`) are caught in the form, which shows an error and starts with an empty library; they are left off the diagram to keep it readable.
