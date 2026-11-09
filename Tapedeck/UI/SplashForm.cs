@@ -5,14 +5,17 @@ namespace mediaPlayerPrj;
 /// <summary>
 /// Splash screen. M3: layout (logo, title, group, section).
 /// M4: member cards with photo, name and role (grey placeholder if no photo).
-/// M5 (3-second timer) is added to this file next.
+/// M5: closes after about 3 seconds, or on click / key press.
 /// </summary>
 public class SplashForm : Form
 {
+    private const int SplashMilliseconds = 3000;
+
     private readonly PictureBox _logo = new PictureBox();
     private readonly Label _title = new Label();
     private readonly Label _group = new Label();
     private readonly Panel _cardsPanel = new Panel();
+    private readonly System.Windows.Forms.Timer _timer = new System.Windows.Forms.Timer();
 
     /// <summary>Builds the splash window.</summary>
     public SplashForm()
@@ -29,16 +32,36 @@ public class SplashForm : Form
         string skin = AssetPath("tapedeck_skin.png");
         if (File.Exists(skin))
         {
-            BackgroundImage = Image.FromFile(skin);
+            BackgroundImage = LoadImage(skin);
             BackgroundImageLayout = ImageLayout.Stretch;
         }
 
         BuildLayout();
 
-        // Temporary so the app never gets stuck: click or any key closes the splash.
-        // M5 adds the 3-second timer.
-        Click += (sender, e) => DialogResult = DialogResult.OK;
-        KeyDown += (sender, e) => DialogResult = DialogResult.OK;
+        // M5: click or any key closes the splash
+        Click += (sender, e) => CloseSplash();
+        KeyDown += (sender, e) => CloseSplash();
+
+        // M5: close automatically after 3 seconds
+        _timer.Interval = SplashMilliseconds;
+        _timer.Tick += (sender, e) => CloseSplash();
+    }
+
+    /// <summary>Starts the 3-second countdown once the splash is visible.</summary>
+    protected override void OnShown(EventArgs e)
+    {
+        base.OnShown(e);
+        _timer.Start();
+    }
+
+    /// <summary>Stops the timer and closes the splash (safe to call more than once).</summary>
+    private void CloseSplash()
+    {
+        _timer.Stop();
+        if (DialogResult != DialogResult.OK)
+        {
+            DialogResult = DialogResult.OK;
+        }
     }
 
     private void BuildLayout()
@@ -53,7 +76,7 @@ public class SplashForm : Form
         {
             _logo.Image = LoadImage(logoPath);
         }
-        _logo.Click += (sender, e) => DialogResult = DialogResult.OK;
+        _logo.Click += (sender, e) => CloseSplash();
         Controls.Add(_logo);
 
         // Title
@@ -64,7 +87,7 @@ public class SplashForm : Form
         _title.AutoSize = false;
         _title.TextAlign = ContentAlignment.MiddleCenter;
         _title.SetBounds(0, 160, ClientSize.Width, 65);
-        _title.Click += (sender, e) => DialogResult = DialogResult.OK;
+        _title.Click += (sender, e) => CloseSplash();
         Controls.Add(_title);
 
         // Group and section
@@ -75,13 +98,13 @@ public class SplashForm : Form
         _group.AutoSize = false;
         _group.TextAlign = ContentAlignment.MiddleCenter;
         _group.SetBounds(0, 225, ClientSize.Width, 35);
-        _group.Click += (sender, e) => DialogResult = DialogResult.OK;
+        _group.Click += (sender, e) => CloseSplash();
         Controls.Add(_group);
 
         // Member cards (M4)
         _cardsPanel.BackColor = Color.Transparent;
         _cardsPanel.SetBounds(30, 290, ClientSize.Width - 60, 300);
-        _cardsPanel.Click += (sender, e) => DialogResult = DialogResult.OK;
+        _cardsPanel.Click += (sender, e) => CloseSplash();
         Controls.Add(_cardsPanel);
         BuildCards();
     }
@@ -152,10 +175,10 @@ public class SplashForm : Form
         card.Controls.Add(role);
 
         // Clicking anywhere on the card closes the splash
-        card.Click += (sender, e) => DialogResult = DialogResult.OK;
+        card.Click += (sender, e) => CloseSplash();
         foreach (Control child in card.Controls)
         {
-            child.Click += (sender, e) => DialogResult = DialogResult.OK;
+            child.Click += (sender, e) => CloseSplash();
         }
 
         return card;
@@ -174,11 +197,12 @@ public class SplashForm : Form
         return Path.Combine(AppContext.BaseDirectory, "Assets", file);
     }
 
-    /// <summary>Frees the images.</summary>
+    /// <summary>Frees the timer and images.</summary>
     protected override void Dispose(bool disposing)
     {
         if (disposing)
         {
+            _timer.Dispose();
             _logo.Image?.Dispose();
             BackgroundImage?.Dispose();
             foreach (Control card in _cardsPanel.Controls)
