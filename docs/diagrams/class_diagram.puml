@@ -1,0 +1,205 @@
+@startuml class_diagram
+' Tapedeck – class diagram (matches the code in Tapedeck/)
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype ortho
+skinparam class {
+  BackgroundColor #F8F8F8
+  BorderColor #000080
+  ArrowColor #333333
+}
+hide empty members
+
+interface IMediaControls <<interface>> {
+  +Play()
+  +Pause()
+  +Stop()
+  +Next()
+  +Previous()
+}
+
+abstract class MediaItem <<abstract>> {
+  -_title : string
+  -_artist : string
+  -_duration : TimeSpan
+  -_filePath : string
+  -_rating : int
+  +Title : string  «blank → Unknown Title»
+  +Artist : string  «blank → Unknown Artist»
+  +Duration : TimeSpan  «negative → 0»
+  +FilePath : string
+  +IsFavorite : bool
+  +Rating : int  «clamped 0–5»
+  +DurationText : string
+  +FileName : string
+  +RatingStars : string
+  #MediaItem(title, artist, duration, filePath)
+  +{abstract} MediaType : string
+  +{abstract} Extra : string
+  +{abstract} ExtraLabel : string
+  +ToFileLine() : string  «virtual»
+  +ToString() : string  «override»
+}
+
+class AudioItem {
+  -_album : string
+  +Album : string
+  +AudioItem(title, artist, duration, filePath, album)
+  +MediaType : string = "Audio"  «override»
+  +Extra : string = Album  «override»
+  +ExtraLabel : string = "Album"  «override»
+}
+
+class VideoItem {
+  -_resolution : string
+  +Resolution : string
+  +VideoItem(title, artist, duration, filePath, resolution)
+  +MediaType : string = "Video"  «override»
+  +Extra : string = Resolution  «override»
+  +ExtraLabel : string = "Resolution"  «override»
+}
+
+class Form <<WinForms>>
+
+class BasePlayerForm {
+  -_libVLC : LibVLC
+  -_player : MediaPlayer
+  #VideoSurface : VideoView
+  #Playlist : List<MediaItem>
+  #CurrentIndex : int
+  +ShuffleEnabled : bool
+  +Repeat : RepeatMode
+  #ElapsedTime : TimeSpan
+  #CurrentItem : MediaItem
+  +Play()  «virtual»
+  +Pause()  «virtual»
+  +Stop()  «virtual»
+  +Next()  «virtual»
+  +Previous()  «virtual»
+  +SetVolume(percent : int)  «virtual»
+  +Seek(position : float)  «virtual»
+  #AttachVideo(host : Control)
+  #SetPlaylist(items : List<MediaItem>)
+  #ReadMediaItemAsync(path : string) : Task<MediaItem>
+  #OnNowPlayingChanged(item : MediaItem)  «virtual hook»
+  #ApplyTheme()  «virtual hook»
+  #SetStatus(text : string)  «virtual hook»
+  #ShowError(message : string)  «virtual hook»
+  -PlayNextOrStop()
+  -PickRandomIndex() : int
+}
+
+class TapedeckForm {
+  -tmrElapsed : Timer
+  -menuMain : MenuStrip
+  +Play()  «override»
+  +Pause()  «override»
+  +Stop()  «override»
+  #OnNowPlayingChanged(item)  «override»
+  #ApplyTheme()  «override»
+  #SetStatus(text)  «override»
+  #ShowError(message)  «override»
+  +ToggleFavorite()  «unique»
+  +SetRating(stars : int)  «unique»
+  +SearchLibrary(text : string)  «unique»
+  +CycleRepeat()  «unique»
+  -SortLibrary(key : SortKey)
+  -BuildMenu()
+  -RefreshListView()
+}
+
+class SplashForm {
+  -_timer : Timer
+  -BuildLayout()
+  -CloseSplash()
+}
+
+class LibraryStore <<static>> {
+  +FileName : string = "Library.txt"
+  +DefaultPath : string
+  +Save(path, items : List<MediaItem>)
+  +Load(path, out skippedLines : int) : List<MediaItem>
+  +ParseLine(line : string) : MediaItem
+}
+
+class FavoritesStore <<static>> {
+  +FileName : string = "Favorites.txt"
+  +Save(path, items : List<MediaItem>)
+  +Apply(path, items : List<MediaItem>, out skippedLines : int)
+}
+
+class MediaFormats <<static>> {
+  +IsSupported(path) : bool
+  +IsVideoFile(path) : bool
+  +Create(mediaType, title, artist, duration, filePath, extra) : MediaItem
+}
+
+class LibrarySorter <<static>> {
+  +Compare(a, b : MediaItem, key : SortKey) : int
+  +InsertionSort(items : List<MediaItem>, key : SortKey)
+  +BinarySearchByTitle(items, title) : int
+  +FindFirstContaining(items, text) : int
+}
+
+class Theme <<static>> {
+  +BackgroundFile : string
+  +Borderless : bool
+  +colours, fonts, button images
+  +LoadImage(fileName) : Image
+  +EnableDrag(form : Form, handle : Control)
+}
+
+class TeamInfo <<static>> {
+  +AppTitle : string
+  +GroupName : string
+  +Section : string
+  +Members : TeamMember[]
+}
+
+class TeamMember {
+  +Name : string
+  +Role : string
+  +PhotoFile : string
+}
+
+class TimeFormat <<static>> {
+  +ToClock(time : TimeSpan) : string
+}
+
+enum SortKey {
+  Title
+  Artist
+  AlbumOrResolution
+  Duration
+  Rating
+}
+
+enum RepeatMode {
+  Off
+  All
+  One
+}
+
+' Inheritance and implementation
+MediaItem <|-- AudioItem
+MediaItem <|-- VideoItem
+Form <|-- BasePlayerForm
+IMediaControls <|.. BasePlayerForm
+BasePlayerForm <|-- TapedeckForm
+Form <|-- SplashForm
+
+' Associations
+BasePlayerForm "1" o-- "0..*" MediaItem : Playlist
+BasePlayerForm --> RepeatMode
+TapedeckForm ..> LibraryStore : save / load
+TapedeckForm ..> FavoritesStore : save / apply
+TapedeckForm ..> LibrarySorter : sort / search
+TapedeckForm ..> Theme : ApplyTheme
+TapedeckForm ..> SplashForm : About (F1)
+LibrarySorter ..> SortKey
+LibraryStore ..> MediaFormats : ParseLine
+MediaFormats ..> MediaItem : creates
+SplashForm ..> TeamInfo
+TeamInfo "1" *-- "1..*" TeamMember
+MediaItem ..> TimeFormat
+@enduml
