@@ -1,6 +1,6 @@
 # 6. Test Plan, Test Cases, and Bug Log
 
-**Project:** Tapedeck (OOP10 media player) · **Group 3 – BSCS 2A** · **Author:** Valencia Genevieve (Genevieve)  
+**Project:** Tapedeck (OOP10 media player) · **OOP Group 2 – BSCS 2-A** · **Author:** Valencia Genevieve (Genevieve)  
 **Branch:** `test/test-plan` · **Date:** November 9, 2026  
 
 ---
