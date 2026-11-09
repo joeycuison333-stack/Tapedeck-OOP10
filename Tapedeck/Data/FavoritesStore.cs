@@ -17,6 +17,12 @@ public static class FavoritesStore
     private const string FavoriteFlag = "1";
     private const string NotFavoriteFlag = "0";
 
+    // Favorites.txt line: FilePath|1or0|rating
+    private const int FieldCount = 3;
+    private const int PathField = 0;
+    private const int FavoriteField = 1;
+    private const int RatingField = 2;
+
     /// <summary>Full path of Favorites.txt next to the program.</summary>
     public static string DefaultPath
     {
@@ -47,9 +53,47 @@ public static class FavoritesStore
         return item.FilePath + Separator + flag + Separator + item.Rating;
     }
 
-    /// <summary>Placeholder: applies nothing yet.</summary>
+    /// <summary>
+    /// Reads Favorites.txt (UTF-8) and sets IsFavorite and Rating on the matching loaded items.
+    /// A missing file means nothing was marked yet. Blank lines are ignored. A line without three
+    /// fields or with a rating that is not a number is skipped and counted. A line for a file that
+    /// is no longer in the library is ignored. Paths are compared without letter case, like Windows.
+    /// Callers must catch <see cref="IOException"/> and <see cref="UnauthorizedAccessException"/>.
+    /// </summary>
+    /// <param name="path">Full path of Favorites.txt.</param>
+    /// <param name="items">The items just loaded from Library.txt.</param>
+    /// <param name="skippedLines">How many damaged lines were skipped.</param>
     public static void Apply(string path, List<MediaItem> items, out int skippedLines)
     {
         skippedLines = 0;
+        if (!File.Exists(path)) return;
+
+        Dictionary<string, MediaItem> itemsByPath = BuildPathIndex(items);
+        foreach (string line in File.ReadAllLines(path, Encoding.UTF8))
+        {
+            if (string.IsNullOrWhiteSpace(line)) continue;
+
+            string[] fields = line.Split(Separator);
+            if (fields.Length != FieldCount || !int.TryParse(fields[RatingField].Trim(), out int rating))
+            {
+                skippedLines++;
+                continue;
+            }
+
+            if (itemsByPath.TryGetValue(fields[PathField].Trim(), out MediaItem item))
+            {
+                item.IsFavorite = fields[FavoriteField].Trim() == FavoriteFlag;
+                item.Rating = rating; // the Rating setter keeps it between 0 and 5
+            }
+        }
+    }
+
+    // Looks up an item by its file path in one step instead of searching the whole list per line.
+    private static Dictionary<string, MediaItem> BuildPathIndex(List<MediaItem> items)
+    {
+        Dictionary<string, MediaItem> itemsByPath = new Dictionary<string, MediaItem>(StringComparer.OrdinalIgnoreCase);
+        foreach (MediaItem item in items)
+            itemsByPath[item.FilePath] = item;
+        return itemsByPath;
     }
 }
