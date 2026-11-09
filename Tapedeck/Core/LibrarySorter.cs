@@ -48,9 +48,33 @@ public static class LibrarySorter
             _ => throw new ArgumentOutOfRangeException(nameof(key))
         };
     }
-    public static void InsertionSort(List<MediaItem> items, SortKey key) { }
 
-    /// <summary>Placeholder: never finds anything.</summary>
+    /// <summary>
+    /// Sorts the media items using a stable, hand-written insertion sort.
+    /// Efficient for small or nearly sorted lists and sorts in place.
+    /// Best case: O(n). Worst case: O(n²).
+    /// </summary>
+    public static void InsertionSort(List<MediaItem> items, SortKey key)
+    {
+        if (items == null)
+        {
+            throw new ArgumentNullException(nameof(items));
+        }
+
+        for (int i = 1; i < items.Count; i++)
+        {
+            MediaItem current = items[i];
+            int j = i - 1;
+
+            while (j >= 0 && Compare(items[j], current, key) > 0)
+            {
+                items[j + 1] = items[j];
+                j--;
+            }
+
+            items[j + 1] = current;
+        }
+    }
     public static int BinarySearchByTitle(List<MediaItem> items, string title) { return -1; }
 
     /// <summary>Placeholder: never finds anything.</summary>
