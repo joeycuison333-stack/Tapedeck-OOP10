@@ -75,8 +75,43 @@ public static class LibrarySorter
             items[j + 1] = current;
         }
     }
-    public static int BinarySearchByTitle(List<MediaItem> items, string title) { return -1; }
+    public static int BinarySearchByTitle(List<MediaItem> items, string title)
+    {
+        if (items == null)
+        {
+            throw new ArgumentNullException(nameof(items));
+        }
 
-    /// <summary>Placeholder: never finds anything.</summary>
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            return -1;
+        }
+
+        int low = 0;
+        int high = items.Count - 1;
+
+        while (low <= high)
+        {
+            int middle = low + (high - low) / 2;
+
+            int comparison = StringComparer.OrdinalIgnoreCase.Compare(
+                items[middle].Title, title);
+
+            if (comparison == 0)
+            {
+                return middle;
+            }
+            else if (comparison < 0)
+            {
+                low = middle + 1;
+            }
+            else
+            {
+                high = middle - 1;
+            }
+        }
+
+        return -1;
+    }
     public static int FindFirstContaining(List<MediaItem> items, string text) { return -1; }
 }
