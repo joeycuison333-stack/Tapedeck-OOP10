@@ -20,12 +20,18 @@ public enum SortKey
 }
 
 /// <summary>
-/// PLACEHOLDER pushed by Joey so the project builds. AMMAAR replaces this whole file
-/// with the hand-written insertion sort and binary search.
+/// Provides comparison, sorting, and searching operations for media items.
+/// Uses a hand-written, stable insertion sort and searching algorithms.
 /// </summary>
 public static class LibrarySorter
 {
-    /// <summary>Placeholder: treats every item as equal.</summary>
+    /// <summary>
+    /// Compares two media items using the selected sorting key.
+    /// </summary>
+    /// <param name="a">The first media item.</param>
+    /// <param name="b">The second media item.</param>
+    /// <param name="key">The sorting property to compare.</param>
+    /// <returns>A negative, zero, or positive value indicating the comparison result.</returns>
     public static int Compare(MediaItem a, MediaItem b, SortKey key)
     {
         return key switch
@@ -75,6 +81,13 @@ public static class LibrarySorter
             items[j + 1] = current;
         }
     }
+    /// <summary>
+    /// Finds a media item by its exact title using binary search.
+    /// The list must already be sorted by title.
+    /// </summary>
+    /// <param name="items">The sorted list of media items.</param>
+    /// <param name="title">The title to search for.</param>
+    /// <returns>The matching item's index, or -1 if not found.</returns
     public static int BinarySearchByTitle(List<MediaItem> items, string title)
     {
         if (items == null)
@@ -113,6 +126,12 @@ public static class LibrarySorter
 
         return -1;
     }
+    /// <summary>
+    /// Finds the first media item whose title or artist contains the search text.
+    /// </summary>
+    /// <param name="items">The media items to search.</param>
+    /// <param name="text">The partial text to find.</param>
+    /// <returns>The first matching item's index, or -1 if not found.</returns>
     public static int FindFirstContaining(List<MediaItem> items, string text)
     {
         if (items == null)
