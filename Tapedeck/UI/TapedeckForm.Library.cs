@@ -1,3 +1,6 @@
+using System.ComponentModel;
+using System.Diagnostics;
+
 namespace mediaPlayerPrj;
 
 /// <summary>
@@ -115,7 +118,14 @@ public partial class TapedeckForm
         return status;
     }
 
-    private void ReloadLibrary() { }
+    // File > Reload Library (Ctrl+Shift+L): reads the files again, for example after editing in
+    // Notepad. It does not save first, so the changes made in Notepad are kept.
+    private void ReloadLibrary()
+    {
+        Stop();
+        ShowNowPlaying(null);
+        LoadLibraryFromFile();
+    }
 
     // Used when the form closes and after adding files; errors are shown, never thrown.
     private void SaveLibraryToFile()
@@ -150,7 +160,36 @@ public partial class TapedeckForm
         return false;
     }
 
-    private void btnOpenNotepad_Click(object sender, EventArgs e) { }
+    // File > Open Library in Notepad (Ctrl+L). Saves first so Notepad shows the current list.
+    private void btnOpenNotepad_Click(object sender, EventArgs e)
+    {
+        if (!TrySaveLibrary()) return;
 
-    private int CountMissingFiles() { return 0; }
+        try
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo(NotepadExe, "\"" + LibraryStore.DefaultPath + "\"");
+            startInfo.UseShellExecute = false;
+            using (Process.Start(startInfo)) { } // we do not wait for Notepad to close
+            SetStatus(LibraryStore.FileName + " opened in Notepad. After saving your changes there, use File > Reload Library (Ctrl+Shift+L).");
+        }
+        catch (Win32Exception ex)
+        {
+            ShowError("Notepad could not be started.\n\n" + ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            ShowError("Notepad could not be started.\n\n" + ex.Message);
+        }
+    }
+
+    // How many items point to a file that was moved or deleted (FR7). Those rows are greyed out.
+    private int CountMissingFiles()
+    {
+        int missing = 0;
+        foreach (MediaItem item in Playlist)
+        {
+            if (!File.Exists(item.FilePath)) missing++;
+        }
+        return missing;
+    }
 }
