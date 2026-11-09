@@ -24,6 +24,10 @@ public partial class TapedeckForm : BasePlayerForm
     private const int DurationColumn = 3;
     private const int RatingColumn = 4;
 
+    // Share of the list width per column, in the order above (the designed widths 92/70/62/58/40).
+    private static readonly int[] ColumnWeights = { 92, 70, 62, 58, 40 };
+    private const int ColumnMargin = 4;
+
     private readonly System.Windows.Forms.Timer tmrElapsed = new System.Windows.Forms.Timer();
     private MenuStrip menuMain;
     private ToolStripMenuItem shuffleItem;
@@ -44,6 +48,8 @@ public partial class TapedeckForm : BasePlayerForm
         SetVolume(trackVolume.Value);
         SetUpToolTips();
         listView1.ShowItemToolTips = true;
+        listView1.Resize += (s, e) => FitColumns();
+        FitColumns();
 
         tmrElapsed.Interval = ElapsedIntervalMs;
         tmrElapsed.Tick += tmrElapsed_Tick;
@@ -207,6 +213,27 @@ public partial class TapedeckForm : BasePlayerForm
         toolTip1.SetToolTip(btnSearch, "Search by title or artist (Ctrl+F)");
         toolTip1.SetToolTip(btnClose, "Close");
         toolTip1.SetToolTip(btnMinimize, "Minimize");
+    }
+
+    // Windows display scaling enlarges the list but not its columns, which left the text cut off
+    // ("LAN… Un…"). Share the list's width between the columns in the designed proportions instead.
+    private void FitColumns()
+    {
+        // Always leave room for the vertical scroll bar, so adding items never adds a horizontal one.
+        int available = listView1.Width - SystemInformation.VerticalScrollBarWidth - ColumnMargin;
+        if (available <= 0) return;
+
+        int totalWeight = 0;
+        foreach (int weight in ColumnWeights) totalWeight += weight;
+
+        int used = 0;
+        for (int i = 1; i < listView1.Columns.Count; i++)
+        {
+            int width = available * ColumnWeights[i] / totalWeight;
+            listView1.Columns[i].Width = width;
+            used += width;
+        }
+        listView1.Columns[TitleColumn].Width = available - used; // the title gets what is left
     }
 
     private void btnClose_Click(object sender, EventArgs e) { Close(); }
