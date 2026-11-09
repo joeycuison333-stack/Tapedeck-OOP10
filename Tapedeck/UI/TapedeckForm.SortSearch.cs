@@ -55,9 +55,60 @@ public partial class TapedeckForm
                 break;
         }
     }
-    public void SearchLibrary(string text) { SetStatus("Search: coming soon (Ammaar)."); }
+    /// <summary>
+    /// Searches the library by exact title first, then by partial title or artist.
+    /// </summary>
+    /// <param name="text">The title or artist text to search for.</param>
+    public void SearchLibrary(string text)
+    {
+        text = text?.Trim() ?? string.Empty;
+
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            SetStatus("Enter a title or artist to search.");
+            return;
+        }
+
+        if (Playlist.Count == 0)
+        {
+            SetStatus("The library is empty.");
+            return;
+        }
+
+        SortLibrary(SortKey.Title);
+
+        int index = LibrarySorter.BinarySearchByTitle(Playlist, text);
+        string method = "binary search";
+
+        if (index == -1)
+        {
+            index = LibrarySorter.FindFirstContaining(Playlist, text);
+            method = "partial-match search";
+        }
+
+        if (index == -1)
+        {
+            SetStatus("No match for \"" + text + "\".");
+            return;
+        }
+
+        SelectRow(index);
+        listView1.Focus();
+
+        SetStatus("Found \"" + text + "\" using " + method + ".");
+    }
 
     private void btnSearch_Click(object sender, EventArgs e) { SearchLibrary(txtSearch.Text); }
 
-    private void txtSearch_KeyDown(object sender, KeyEventArgs e) { }
+    /// <summary>
+    /// Runs the library search when the Enter key is pressed.
+    /// </summary>
+    private void txtSearch_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.KeyCode == Keys.Enter)
+        {
+            e.SuppressKeyPress = true;
+            SearchLibrary(txtSearch.Text);
+        }
+    }
 }
