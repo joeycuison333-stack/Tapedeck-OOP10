@@ -1,0 +1,55 @@
+@startuml sequence_load_library
+' Sequence diagram: Load Library.txt at start-up (docs/02a_UML_Use_Case_and_Sequence.md section 3.3). Owner: Heaven.
+' Render: java -jar plantuml.jar -tpng sequence_load_library.puml
+hide footbox
+skinparam shadowing false
+skinparam sequence {
+  ParticipantBackgroundColor #FFF8E7
+  ParticipantBorderColor #5A4632
+  LifeLineBorderColor #5A4632
+}
+
+actor User
+participant ":TapedeckForm" as Form
+participant "LibraryStore" as Lib
+participant "MediaFormats" as Formats
+participant "FavoritesStore" as Fav
+participant "File System" as FS
+
+User -> Form : starts the program
+Form -> Form : OnShown()
+Form -> Form : LoadLibraryFromFile()
+
+Form -> Lib : Load(path, out skippedLines)
+Lib -> FS : File.Exists(Library.txt)
+
+alt Library.txt is missing (first run)
+  Lib --> Form : empty list
+else Library.txt exists
+  Lib -> FS : File.ReadAllLines()
+  loop each line that is not blank
+    Lib -> Lib : ParseLine(line)
+    alt line is valid
+      Lib -> Formats : Create(type, title, ...)
+      Formats --> Lib : AudioItem or VideoItem
+    else line is damaged
+      Lib -> Lib : skippedLines++
+    end
+  end
+  Lib --> Form : items
+end
+
+Form -> Fav : Apply(path, items, out skippedLines)
+Fav -> FS : File.ReadAllLines(Favorites.txt)
+Fav --> Form : favorites and ratings set
+
+Form -> Form : SetPlaylist(items)
+Form -> Form : RefreshListView()
+
+opt damaged lines were skipped
+  Form -> Form : ShowError("N damaged line(s) ... were skipped")
+end
+
+Form -> Form : CountMissingFiles()
+Form -> Form : SetStatus("Loaded N item(s) ...")
+@enduml
