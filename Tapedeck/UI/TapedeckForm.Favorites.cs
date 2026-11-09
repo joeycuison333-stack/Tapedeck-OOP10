@@ -7,8 +7,11 @@ namespace mediaPlayerPrj;
 public partial class TapedeckForm
 {
     private const string SelectToFavoriteMessage = "Select an item to mark as favorite.";
+    private const string SelectToRateMessage = "Select an item to rate.";
     private const string MarkedFavoritePrefix = "Marked as favorite: ";
     private const string RemovedFavoritePrefix = "Removed from favorites: ";
+    private const string RatedPrefix = "Rated ";
+    private const string RatingClearedPrefix = "Rating cleared: ";
     private const string FavButtonText = "♥ Fav";
     private const string UnfavButtonText = "♥ Unfav";
 
@@ -39,17 +42,54 @@ public partial class TapedeckForm
         SetStatus((item.IsFavorite ? MarkedFavoritePrefix : RemovedFavoritePrefix) + item);
     }
 
-    /// <summary>Placeholder: ratings are not available yet (Genevieve G5).</summary>
-    /// <param name="stars">Star rating between 0 and 5.</param>
-    public void SetRating(int stars) { }
+    /// <summary>
+    /// Sets the star rating (0-5) of the selected media item.
+    /// Updates the list view, saves the library, updates Now Playing if currently playing,
+    /// and displays a status message with the rating stars.
+    /// </summary>
+    /// <param name="stars">Star rating between 0 (not rated) and 5.</param>
+    public void SetRating(int stars)
+    {
+        MediaItem item = SelectedItem;
+        if (item == null)
+        {
+            SetStatus(SelectToRateMessage);
+            return;
+        }
 
-    private void cboRating_SelectedIndexChanged(object sender, EventArgs e) { }
+        item.Rating = stars;
+        RefreshListView();
+        SaveLibraryToFile();
 
+        if (item == CurrentItem)
+        {
+            ShowNowPlaying(item);
+        }
+
+        SetStatus(item.Rating > 0 ? RatedPrefix + item.RatingStars + ": " + item : RatingClearedPrefix + item);
+    }
+
+    /// <summary>
+    /// Handles changes in the rating dropdown selection.
+    /// Returns early if currently updating programmatically or if nothing is selected.
+    /// </summary>
+    private void cboRating_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (_updatingRating || cboRating.SelectedIndex < 0 || SelectedItem == null)
+        {
+            return;
+        }
+
+        SetRating(cboRating.SelectedIndex);
+    }
+
+    /// <summary>Event handler for clicking the favorite button.</summary>
     private void btnFavorite_Click(object sender, EventArgs e)
     {
         ToggleFavorite();
     }
 
+    /// <summary>Placeholder: column text for favorites and ratings (implemented in G6).</summary>
     private static string FavoriteText(MediaItem item)
     {
         return string.Empty;
