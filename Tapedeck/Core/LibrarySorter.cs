@@ -87,7 +87,7 @@ public static class LibrarySorter
     /// </summary>
     /// <param name="items">The sorted list of media items.</param>
     /// <param name="title">The title to search for.</param>
-    /// <returns>The matching item's index, or -1 if not found.</returns
+    /// <returns>The matching item's index, or -1 if not found.</returns>
     public static int BinarySearchByTitle(List<MediaItem> items, string title)
     {
         if (items == null)
