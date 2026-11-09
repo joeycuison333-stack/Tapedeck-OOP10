@@ -59,13 +59,24 @@ public partial class TapedeckForm
         helpMenu.DropDownItems.Add(CreateItem("&About", Keys.F1, (s, e) => ShowAbout()));
 
         menuMain.Items.AddRange(new ToolStripItem[] { fileMenu, playMenu, libraryMenu, helpMenu });
-        // The menu sits under the custom title bar, like a classic desktop window.
         menuMain.Dock = DockStyle.None;
         menuMain.AutoSize = false;
-        menuMain.Location = new Point(0, Theme.TitleBarHeight);
-        menuMain.Size = new Size(ClientSize.Width, Theme.MenuHeight);
         MainMenuStrip = menuMain;
         Controls.Add(menuMain);
+        PlaceMenu();
+        pnlHeader.SizeChanged += (s, e) => PlaceMenu(); // Windows display scaling resizes the title bar
+    }
+
+    // The menu sits right under the custom title bar, like a classic desktop window. It is added
+    // in code after the designer layout was scaled for the display (125%, 150%...), so its position
+    // and height come from the scaled title bar instead of fixed pixels. Otherwise the taller title
+    // bar would cover the menu and swallow its clicks.
+    private void PlaceMenu()
+    {
+        float scale = pnlHeader.Height / (float)Theme.TitleBarHeight;
+        menuMain.Location = new Point(0, pnlHeader.Bottom);
+        menuMain.Size = new Size(ClientSize.Width, (int)Math.Round(Theme.MenuHeight * scale));
+        menuMain.BringToFront(); // nothing may cover the menu
     }
 
     // One place that creates every menu item, so the shortcut code is not repeated.
