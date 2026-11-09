@@ -1,4 +1,4 @@
-namespace Tapedeck.UI   // keep the SAME namespace as the placeholder file
+namespace Tapedeck.UI   
 {
     public class TeamMember
     {
