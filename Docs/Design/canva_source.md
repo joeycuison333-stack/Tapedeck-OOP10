@@ -5,7 +5,7 @@
 
 ## Canva link
 
-https://canva.link/gjiv1j4cuvzy9hu
+https://www.canva.com/d/xEJW69wTCj1GAl8
 
 ## Files
 

@@ -9,7 +9,7 @@
 | **Team** | **Joey Cuison** (leader) · **Heaven** · **Ammaar Azmy** · **Christian Maddox Rivera (Maddox)** · **Valencia Genevieve (Genevieve)** |
 | **Repository** | github.com/joeycuison333-stack/Tapedeck-OOP10 (private) |
 | **Final due date** | Saturday, November 14, 2026 |
-| **Canva skin source** | https://canva.link/u1lv3kiz80z63am – page 1 is the skin. Export page 1 only, as PNG, **980 × 620 px**, to `Tapedeck/Assets/tapedeck_skin.png`. |
+| **Canva skin source** | https://www.canva.com/d/xEJW69wTCj1GAl8 – page 1 is the skin. Export page 1 only, as PNG, **980 × 620 px**, to `Tapedeck/Assets/tapedeck_skin.png`. |
 | **IDE (everyone)** | **Visual Studio 2026** + .NET desktop development workload + .NET 8.0 Runtime component. Keep `.sln` (do not convert to `.slnx`) and keep `net8.0-windows`. Antigravity is used only to run the prompts. |
 
 ---
