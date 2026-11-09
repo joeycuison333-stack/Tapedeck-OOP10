@@ -1,4 +1,4 @@
-namespace Tapedeck.UI   
+namespace Tapedeck.UI    
 {
     public class TeamMember
     {
