@@ -1,20 +1,121 @@
 namespace mediaPlayerPrj;
 
 /// <summary>
-/// PLACEHOLDER pushed by Joey so the project builds. HEAVEN replaces this whole file
-/// (remove, load at start-up, save, reload, open in Notepad, missing files).
+/// Library part of the form (FR3, FR7): load Library.txt and Favorites.txt at start-up, save,
+/// remove items, reload, open the library in Notepad and count missing files.
+/// The file work itself is done by LibraryStore and FavoritesStore. Owner: Heaven.
 /// </summary>
 public partial class TapedeckForm
 {
+    private const string EmptyLibraryStatus = "The library is empty. Add files with Ctrl+O.";
+    private const string SaveHint = "\n\nIf the program is in a protected folder such as Program Files, move it to Documents and try again.";
+
     private void btnRemove_Click(object sender, EventArgs e) { SetStatus("Remove: coming soon (Heaven)."); }
 
-    private void LoadLibraryFromFile() { }
+    // Start-up and reload: a missing, unreadable or damaged file never stops the program.
+    private void LoadLibraryFromFile()
+    {
+        List<MediaItem> items = ReadLibraryFile(out int skippedLibrary);
+        int skippedFavorites = ApplyFavoritesFile(items);
+
+        CurrentIndex = -1; // nothing is playing after a load
+        SetPlaylist(items);
+        RefreshListView();
+
+        ReportSkippedLines(LibraryStore.FileName, skippedLibrary);
+        ReportSkippedLines(FavoritesStore.FileName, skippedFavorites);
+        SetStatus(LoadedStatus());
+    }
+
+    // Reads Library.txt. On a read error the library starts empty and the user is told why.
+    private List<MediaItem> ReadLibraryFile(out int skippedLines)
+    {
+        skippedLines = 0;
+        try
+        {
+            return LibraryStore.Load(LibraryStore.DefaultPath, out skippedLines);
+        }
+        catch (IOException ex)
+        {
+            ShowError(LibraryStore.FileName + " could not be read, so the library starts empty.\n\n" + ex.Message);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            ShowError("No permission to read " + LibraryStore.FileName + ", so the library starts empty.\n\n" + ex.Message);
+        }
+        return new List<MediaItem>();
+    }
+
+    // Applies Favorites.txt. On a read error the items keep no favorites, but stay loaded.
+    private int ApplyFavoritesFile(List<MediaItem> items)
+    {
+        try
+        {
+            FavoritesStore.Apply(FavoritesStore.DefaultPath, items, out int skippedLines);
+            return skippedLines;
+        }
+        catch (IOException ex)
+        {
+            ShowError(FavoritesStore.FileName + " could not be read, so favorites and ratings were not loaded.\n\n" + ex.Message);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            ShowError("No permission to read " + FavoritesStore.FileName + ", so favorites and ratings were not loaded.\n\n" + ex.Message);
+        }
+        return 0;
+    }
+
+    private void ReportSkippedLines(string fileName, int skippedLines)
+    {
+        if (skippedLines > 0)
+            ShowError(skippedLines + " damaged line(s) in " + fileName + " were skipped.\nThe rest of the library was loaded.");
+    }
+
+    // "Loaded 12 item(s)..." plus how many media files are missing, or the empty-library hint.
+    private string LoadedStatus()
+    {
+        if (Playlist.Count == 0) return EmptyLibraryStatus;
+
+        string status = "Loaded " + Playlist.Count + " item(s) from " + LibraryStore.FileName + ".";
+        int missing = CountMissingFiles();
+        if (missing > 0) status += " " + missing + " file(s) not found (shown greyed out).";
+        return status;
+    }
 
     private void ReloadLibrary() { }
 
-    private void SaveLibraryToFile() { }
+    // Used when the form closes and after adding files; errors are shown, never thrown.
+    private void SaveLibraryToFile()
+    {
+        TrySaveLibrary();
+    }
 
-    private void SaveWithStatus() { SetStatus("Save: coming soon (Heaven)."); }
+    // File > Save Library (Ctrl+S).
+    private void SaveWithStatus()
+    {
+        if (TrySaveLibrary())
+            SetStatus("Saved " + Playlist.Count + " item(s) to " + LibraryStore.FileName + ".");
+    }
+
+    // Saves Library.txt and Favorites.txt. Returns false (after telling the user) when saving failed.
+    private bool TrySaveLibrary()
+    {
+        try
+        {
+            LibraryStore.Save(LibraryStore.DefaultPath, Playlist);
+            FavoritesStore.Save(FavoritesStore.DefaultPath, Playlist);
+            return true;
+        }
+        catch (IOException ex)
+        {
+            ShowError("The library could not be saved.\n\n" + ex.Message + SaveHint);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            ShowError("No permission to save the library.\n\n" + ex.Message + SaveHint);
+        }
+        return false;
+    }
 
     private void btnOpenNotepad_Click(object sender, EventArgs e) { }
 
