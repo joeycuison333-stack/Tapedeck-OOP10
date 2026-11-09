@@ -6,7 +6,27 @@ namespace mediaPlayerPrj;
 /// </summary>
 public partial class TapedeckForm
 {
-    private void SortLibrary(SortKey key) { SetStatus("Sorting: coming soon (Ammaar)."); }
+    /// <summary>
+    /// Sorts the playlist using insertion sort while keeping the currently playing item.
+    /// </summary>
+    /// <param name="key">The property used to sort the playlist.</param>
+    private void SortLibrary(SortKey key)
+    {
+        if (Playlist.Count < 2)
+        {
+            return;
+        }
+
+        List<MediaItem> sortedPlaylist = new List<MediaItem>(Playlist);
+
+        LibrarySorter.InsertionSort(sortedPlaylist, key);
+
+        SetPlaylist(sortedPlaylist);
+        RefreshListView();
+        SaveLibraryToFile();
+
+        SetStatus("Sorted by " + key + " (insertion sort).");
+    }
 
     private void listView1_ColumnClick(object sender, ColumnClickEventArgs e) { }
 
