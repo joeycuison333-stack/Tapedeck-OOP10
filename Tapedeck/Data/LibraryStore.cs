@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 
 namespace mediaPlayerPrj;
@@ -14,6 +15,15 @@ public static class LibraryStore
     public const string FileName = "Library.txt";
 
     private const string TempExtension = ".tmp";
+
+    // Library.txt line: Type|Title|Artist|hh:mm:ss|FilePath|Extra
+    private const int FieldCount = 6;
+    private const int TypeField = 0;
+    private const int TitleField = 1;
+    private const int ArtistField = 2;
+    private const int DurationField = 3;
+    private const int PathField = 4;
+    private const int ExtraField = 5;
 
     /// <summary>Full path of Library.txt next to the program.</summary>
     public static string DefaultPath
@@ -67,9 +77,28 @@ public static class LibraryStore
         return items;
     }
 
-    /// <summary>Placeholder: parses nothing yet.</summary>
+    /// <summary>
+    /// Turns one Library.txt line into an AudioItem or VideoItem through
+    /// <see cref="MediaFormats.Create"/>, so this class never checks the media type itself.
+    /// Returns null for a damaged line: wrong number of fields, a bad duration, a blank path,
+    /// a file type other than mp3/mp4, or an unknown media type.
+    /// </summary>
+    /// <param name="line">One line in the format Type|Title|Artist|hh:mm:ss|FilePath|Extra.</param>
+    /// <returns>The item, or null when the line is damaged.</returns>
     public static MediaItem ParseLine(string line)
     {
-        return null;
+        if (string.IsNullOrWhiteSpace(line)) return null;
+
+        string[] fields = line.Split(MediaItem.FieldSeparator);
+        if (fields.Length != FieldCount) return null;
+
+        if (!TimeSpan.TryParse(fields[DurationField], CultureInfo.InvariantCulture, out TimeSpan duration))
+            return null;
+
+        string filePath = fields[PathField].Trim();
+        if (filePath.Length == 0 || !MediaFormats.IsSupported(filePath)) return null;
+
+        return MediaFormats.Create(fields[TypeField], fields[TitleField], fields[ArtistField],
+            duration, filePath, fields[ExtraField]);
     }
 }
