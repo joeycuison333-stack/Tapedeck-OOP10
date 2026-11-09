@@ -14,6 +14,8 @@ public partial class TapedeckForm
     private const string RatingClearedPrefix = "Rating cleared: ";
     private const string FavButtonText = "♥ Fav";
     private const string UnfavButtonText = "♥ Unfav";
+    private const string HeartSymbol = "♥";
+    private const string StarSymbol = "★";
 
     /// <summary>
     /// Toggles the favorite status of the selected item, or the currently playing item if nothing is selected.
@@ -89,9 +91,27 @@ public partial class TapedeckForm
         ToggleFavorite();
     }
 
-    /// <summary>Placeholder: column text for favorites and ratings (implemented in G6).</summary>
+    /// <summary>
+    /// Builds the text for the playlist favorite and rating column (FR8).
+    /// Displays a heart if favorite, plus the star count (for example, "♥", "4★", or "♥ 5★").
+    /// </summary>
+    /// <param name="item">The media item to format.</param>
+    /// <returns>Formatted column text, or empty string if neither favorite nor rated.</returns>
     private static string FavoriteText(MediaItem item)
     {
-        return string.Empty;
+        if (item == null)
+        {
+            return string.Empty;
+        }
+
+        string heart = item.IsFavorite ? HeartSymbol : string.Empty;
+        string rating = item.Rating > 0 ? item.Rating + StarSymbol : string.Empty;
+
+        if (item.IsFavorite && item.Rating > 0)
+        {
+            return heart + " " + rating;
+        }
+
+        return heart + rating;
     }
 }
