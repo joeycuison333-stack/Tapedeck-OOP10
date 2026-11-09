@@ -39,11 +39,32 @@ public static class LibraryStore
         File.Move(tempPath, path, true); // overwrite the old library in one step
     }
 
-    /// <summary>Placeholder: always returns an empty library.</summary>
+    /// <summary>
+    /// Reads Library.txt (UTF-8). A missing file is not an error: it means the first run, so the
+    /// library starts empty. Blank lines are ignored. A damaged line is skipped and counted, so one
+    /// bad line never loses the rest of the library.
+    /// Callers must catch <see cref="IOException"/> and <see cref="UnauthorizedAccessException"/>.
+    /// </summary>
+    /// <param name="path">Full path of Library.txt.</param>
+    /// <param name="skippedLines">How many damaged lines were skipped.</param>
+    /// <returns>The items in file order; empty when the file does not exist.</returns>
     public static List<MediaItem> Load(string path, out int skippedLines)
     {
+        List<MediaItem> items = new List<MediaItem>();
         skippedLines = 0;
-        return new List<MediaItem>();
+        if (!File.Exists(path)) return items; // first run
+
+        foreach (string line in File.ReadAllLines(path, Encoding.UTF8))
+        {
+            if (string.IsNullOrWhiteSpace(line)) continue;
+
+            MediaItem item = ParseLine(line);
+            if (item == null)
+                skippedLines++;
+            else
+                items.Add(item);
+        }
+        return items;
     }
 
     /// <summary>Placeholder: parses nothing yet.</summary>
