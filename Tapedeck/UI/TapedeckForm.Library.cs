@@ -10,7 +10,40 @@ public partial class TapedeckForm
     private const string EmptyLibraryStatus = "The library is empty. Add files with Ctrl+O.";
     private const string SaveHint = "\n\nIf the program is in a protected folder such as Program Files, move it to Documents and try again.";
 
-    private void btnRemove_Click(object sender, EventArgs e) { SetStatus("Remove: coming soon (Heaven)."); }
+    // Remove button, Library > Remove Selected and the Delete key.
+    private void btnRemove_Click(object sender, EventArgs e)
+    {
+        int index = SelectedIndex;
+        if (index < 0)
+        {
+            SetStatus("Select an item to remove first.");
+            return;
+        }
+
+        MediaItem removed = Playlist[index];
+        KeepCurrentIndexAfterRemove(index);
+        Playlist.RemoveAt(index);
+        RefreshListView();
+        SelectRow(Math.Min(index, Playlist.Count - 1)); // so Delete can be pressed again
+
+        if (TrySaveLibrary())
+            SetStatus("Removed: " + removed);
+    }
+
+    // CurrentIndex must keep pointing at the playing item after the list gets shorter.
+    private void KeepCurrentIndexAfterRemove(int index)
+    {
+        if (index == CurrentIndex)
+        {
+            Stop(); // never keep playing an item that is no longer in the list
+            CurrentIndex = -1;
+            ShowNowPlaying(null);
+        }
+        else if (index < CurrentIndex)
+        {
+            CurrentIndex--; // the playing item moved up one row
+        }
+    }
 
     // Start-up and reload: a missing, unreadable or damaged file never stops the program.
     private void LoadLibraryFromFile()
