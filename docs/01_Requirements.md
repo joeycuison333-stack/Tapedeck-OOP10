@@ -1,6 +1,6 @@
 # 2. Requirements Specification
 
-**Project:** Tapedeck (OOP10 media player) · **OOP Group 2 – BSCS 2-A** · **Milestone:** M1 – Analysis and design
+**Project:** Tapedeck (OOP10 media player) · **Group 3 – BSCS 2A** · **Milestone:** M1 – Analysis and design
 
 ---
 

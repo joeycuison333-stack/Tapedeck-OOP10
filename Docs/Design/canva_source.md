@@ -1,7 +1,7 @@
 # Design concept and Canva source
 
 **Designer:** Christian Maddox Rivera (Maddox)
-**Project:** Tapedeck - OOP Group 2, BSCS 2-A
+**Project:** Tapedeck - Group 3, BSCS 2A
 
 ## Canva link
 

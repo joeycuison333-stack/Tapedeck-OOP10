@@ -1,6 +1,6 @@
 # 3. UML Part A – Use Cases and Sequence Diagrams
 
-**Project:** Tapedeck (OOP10 media player) · **OOP Group 2 – BSCS 2-A** · **Author:** Heaven
+**Project:** Tapedeck (OOP10 media player) · **Group 3 – BSCS 2A** · **Author:** Heaven
 
 This part shows *what* the user can do with Tapedeck (use cases) and *how* the objects work together for two key actions (sequence diagrams). The class diagram is in `02b_UML_Class_and_Sorting.md` (Ammaar).
 

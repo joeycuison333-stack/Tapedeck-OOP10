@@ -11,7 +11,7 @@ One entry per milestone. Each increment compiles and runs before it is committed
   - Class diagram with the OOP mapping (`docs/02b_UML_Class_and_Sorting.md`, `docs/diagrams/class_diagram.puml`).
   - Design concept and Canva source link (`Docs/Design/`, Maddox, PR #8).
 - **Changed from plan:** NFR7 (performance) was added while writing the requirements specification.
-- **Problems met:** the group number and section were written two ways ("Group 3 · BSCS 2A" and "OOP Group 2 · BSCS 2-A"). We agreed on **OOP Group 2 · BSCS 2-A** and changed it everywhere (README, PRD, `.csproj`, docs, skin).
+- **Problems met:** the group number and section were written two ways ("Group 3 · BSCS 2A" and "OOP Group 2 · BSCS 2-A"). We confirmed **Group 3 · BSCS 2A** and changed it everywhere (README, PRD, `.csproj`, `TeamInfo`, docs).
 - **Next steps:** M2 core classes (already underway below).
 
 ## M2 – Core logic (due Nov 10)

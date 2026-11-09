@@ -5,7 +5,7 @@
 | **Product** | Tapedeck – Winamp-style desktop media player |
 | **Course** | OOP10 – Object-Oriented Programming with C# and Windows Forms |
 | **Instructor** | Prof. Ulysses Raymond F. Monsale |
-| **Group / Section** | OOP Group 2 · BSCS 2-A |
+| **Group / Section** | Group 3 · BSCS 2A |
 | **Team** | **Joey Cuison** (leader) · **Heaven** · **Ammaar Azmy** · **Christian Maddox Rivera (Maddox)** · **Valencia Genevieve (Genevieve)** |
 | **Repository** | github.com/joeycuison333-stack/Tapedeck-OOP10 (private) |
 | **Final due date** | Saturday, November 14, 2026 |

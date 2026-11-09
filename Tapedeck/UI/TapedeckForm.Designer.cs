@@ -104,7 +104,7 @@ namespace mediaPlayerPrj
             lblGroup.BackColor = Color.Transparent;
             lblGroup.Location = new Point(190, 17);
             lblGroup.Name = "lblGroup";
-            lblGroup.Text = "OOP Group 2 | BSCS 2-A";
+            lblGroup.Text = "Group 3 | BSCS 2A";
             //
             // btnMinimize
             //

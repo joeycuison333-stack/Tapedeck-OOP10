@@ -1,6 +1,6 @@
 # 3. UML Part B – Class Diagram and Sorting Algorithm
 
-**Project:** Tapedeck (OOP10 media player) · **OOP Group 2 – BSCS 2-A** · **Milestone:** M1–M3
+**Project:** Tapedeck (OOP10 media player) · **Group 3 – BSCS 2A** · **Milestone:** M1–M3
 
 The use case and sequence diagrams are in [`02a_UML_Use_Case_and_Sequence.md`](02a_UML_Use_Case_and_Sequence.md).
 
