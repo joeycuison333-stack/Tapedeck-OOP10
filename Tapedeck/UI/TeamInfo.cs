@@ -1,47 +1,33 @@
-namespace mediaPlayerPrj;
-
-/// <summary>One group member shown on the splash screen.</summary>
-public class TeamMember
+namespace Tapedeck.UI    
 {
-    /// <summary>Full name.</summary>
-    public string Name { get; }
-
-    /// <summary>Role from the role matrix.</summary>
-    public string Role { get; }
-
-    /// <summary>Photo path relative to the Assets folder.</summary>
-    public string PhotoFile { get; }
-
-    /// <summary>Creates a member.</summary>
-    public TeamMember(string name, string role, string photoFile)
+    public class TeamMember
     {
-        Name = name;
-        Role = role;
-        PhotoFile = photoFile;
+        public string Name { get; }
+        public string Role { get; }
+        public string PhotoFile { get; }
+
+        public TeamMember(string name, string role, string photoFile)
+        {
+            Name = name;
+            Role = role;
+            PhotoFile = photoFile;
+        }
     }
-}
 
-/// <summary>
-/// PLACEHOLDER pushed by Joey so the project builds. MADDOX replaces this whole file
-/// with all five members, their roles and photos.
-/// </summary>
-public static class TeamInfo
-{
-    /// <summary>Application title.</summary>
-    public const string AppTitle = "Tapedeck";
-
-    /// <summary>Group number.</summary>
-    public const string GroupName = "Group 3";
-
-    /// <summary>Class section.</summary>
-    public const string Section = "BSCS 2A";
-
-    /// <summary>Logo inside the Assets folder.</summary>
-    public const string LogoFile = "logo.png";
-
-    /// <summary>Placeholder member list.</summary>
-    public static readonly TeamMember[] Members =
+    public static class TeamInfo
     {
-        new TeamMember("Team member", "Role", @"Team\placeholder.jpg"),
-    };
+        public const string AppTitle = "Tapedeck";
+        public const string GroupName = "OOP Group 2";
+        public const string Section = "BSCS 2-A";
+        public const string LogoFile = "logo.png";
+
+        public static readonly TeamMember[] Members =
+        {
+            new TeamMember("Joey Cuison", "Team lead / player engine, UI and integration", @"Team\joey.jpg"),
+            new TeamMember("Heaven", "Library saving, loading and deployment", @"Team\heaven.jpg"),
+            new TeamMember("Ammaar Azmy", "Sorting and searching", @"Team\ammaar.jpg"),
+            new TeamMember("Christian Maddox Rivera", "Skin design and splash screen", @"Team\maddox.jpg"),
+            new TeamMember("Valencia Genevieve", "Favorites, testing and user manual", @"Team\genevieve.jpg"),
+        };
+    }
 }
