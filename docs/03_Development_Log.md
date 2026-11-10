@@ -41,6 +41,7 @@ One entry per milestone. Each increment compiles and runs before it is committed
   - `LibrarySorter`: hand-written insertion sort, binary search by title and partial-match search (Ammaar, PR #3 `feature/sorter`).
   - Splash screen with logo, group, section and member cards that closes after 3 s or on click / key (Maddox, PR #4 and #5 `feature/splash`); Canva skin, logo and app icon (Maddox, PR #7 `design/canva-skin`).
   - Sorting from the Library menu and column headers, and the search box with binary search then partial match (`TapedeckForm.SortSearch.cs`, Ammaar, PR #11 `feature/sort-search-form`).
+  - **Retro cassette redesign:** the splash is now drawn as a cassette tape (`splash_bg.png`: charcoal shell, cream label, red / orange / green / teal stripes, reels window, bottom tab) with polaroid-style member cards; photos of any shape are cropped to a square in code. `tapedeck_skin.png` and the `Theme` colours use the same palette, so the player matches the splash. The skin no longer paints the title, group or menu text, so nothing appears twice.
   - Enhancement – favorites and 1–5 star ratings: file side done (`FavoritesStore`, Heaven); the form side (`TapedeckForm.Favorites.cs`, Genevieve) is **in progress**.
 - **Changed from plan:** Play and Pause share one position on the skin and swap visibility instead of having separate always-visible buttons. `btnPlay_Click` (not the `Play` override) resolves the selected row, because `Next()` calls `Play()` directly and must not re-trigger row selection.
 - **Problems met and fixes (PR #9):**
@@ -49,8 +50,7 @@ One entry per milestone. Each increment compiles and runs before it is committed
   - Missing XML comments on `TeamInfo`/`TeamMember` and a broken `</returns` tag in `LibrarySorter` (coding standard). Fixed; the build now has no warnings.
 - **Still open:**
   - `TapedeckForm.Favorites.cs` is still the placeholder (Genevieve, FR8).
-  - The title, group line and menu names are painted into `tapedeck_skin.png` and also drawn by the labels, so they appear twice. The Canva export should leave that text out (Maddox).
-  - Team photos for Joey, Heaven, Ammaar and Genevieve in `Assets/Team` (the splash shows a placeholder until they are added).
+  - Retest the retro splash and skin on Windows (fonts Arial Black, Consolas and Segoe UI are expected there).
   - Retest the window at 100% and 125% scaling on Windows.
 - **Next steps:** M4 – run all test cases on `main`, bug log, user manual, deployment guide, Release build.
 
