@@ -1,7 +1,7 @@
 # 1. Requirements Specification
 
 **Project:** Tapedeck – OOP10 Media Player  
-**Group:** Group 3 – BSCS 2A  
+**Group:** OOP Group 3 – BSCS 2-A  
 **Author:** Ammaar
 
 ## 1.1 Functional Requirements
