@@ -53,6 +53,12 @@ public partial class TapedeckForm : BasePlayerForm
         ClientSizeChanged += (s, e) => PlaceStatusBar();
         PlaceStatusBar();
 
+        // Controls added earlier in the designer sit on top of later ones. At high display
+        // scaling (200%) an overlapping label painted over the Add button and the left edge
+        // of Add Folder, so the library buttons and rating controls are raised to the top.
+        foreach (Control control in new Control[] { btnAdd, btnAddFolder, btnRemove, btnFavorite, lblRating, cboRating })
+            control.BringToFront();
+
         tmrElapsed.Interval = ElapsedIntervalMs;
         tmrElapsed.Tick += tmrElapsed_Tick;
         tmrElapsed.Start();
