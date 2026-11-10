@@ -14,6 +14,9 @@ public static class Theme
     /// <summary>Background PNG (window frame, title bar, group boxes), exported from Canva at the form size (980 x 620).</summary>
     public static string BackgroundFile = "tapedeck_skin.png";
 
+    /// <summary>Splash background PNG (cassette shell, label, stripes, reels), 980 x 620.</summary>
+    public static string SplashBackgroundFile = "splash_bg.png";
+
     /// <summary>Square logo (cassette icon) shown on the splash screen and in the title bar.</summary>
     public static string LogoFile = "logo.png";
 
@@ -35,50 +38,68 @@ public static class Theme
     /// <summary>Height of the menu row under the title bar.</summary>
     public const int MenuHeight = 24;
 
-    /// <summary>Window face colour (classic desktop silver).</summary>
-    public static Color BackColor = Color.FromArgb(192, 192, 192);
+    // Retro cassette palette: charcoal shell, cream label, red / orange / green / teal stripes,
+    // brown tape. The skin PNG and splash_bg.png are painted with these same colours.
 
-    /// <summary>Face colour of buttons and other raised controls.</summary>
-    public static Color CardColor = Color.FromArgb(192, 192, 192);
+    /// <summary>Charcoal cassette shell (window frame, splash background).</summary>
+    public static Color ShellColor = Color.FromArgb(52, 52, 55);
 
-    /// <summary>Main accent: title-bar navy, used for section captions and the playing row.</summary>
-    public static Color AccentColor = Color.FromArgb(0, 0, 128);
+    /// <summary>Brown of the tape seen through the cassette window.</summary>
+    public static Color TapeColor = Color.FromArgb(74, 46, 30);
 
-    /// <summary>Second accent (desktop teal) for "on" states such as shuffle and repeat.</summary>
-    public static Color AccentAltColor = Color.FromArgb(0, 128, 128);
+    /// <summary>The four label stripes, in order: red, orange, green, teal.</summary>
+    public static readonly Color[] StripeColors =
+    {
+        Color.FromArgb(222, 72, 82),
+        Color.FromArgb(236, 168, 62),
+        Color.FromArgb(167, 199, 88),
+        Color.FromArgb(88, 189, 184),
+    };
 
-    /// <summary>Normal text.</summary>
-    public static Color LabelColor = Color.FromArgb(0, 0, 0);
+    /// <summary>Window face colour (cream cassette label). Must match the panel fill in the skin PNG.</summary>
+    public static Color BackColor = Color.FromArgb(248, 234, 219);
 
-    /// <summary>Less important text.</summary>
-    public static Color MutedColor = Color.FromArgb(80, 80, 80);
+    /// <summary>Face colour of buttons and other raised controls (darker cream).</summary>
+    public static Color CardColor = Color.FromArgb(236, 219, 200);
 
-    /// <summary>Text on the navy title bar.</summary>
-    public static Color TitleTextColor = Color.FromArgb(255, 255, 255);
+    /// <summary>Main accent: label red, used for section captions and menu borders.</summary>
+    public static Color AccentColor = Color.FromArgb(196, 62, 72);
 
-    /// <summary>Light text on the title bar for the group line.</summary>
-    public static Color TitleMutedColor = Color.FromArgb(200, 210, 235);
+    /// <summary>Second accent (stripe teal) for "on" states such as shuffle and repeat.</summary>
+    public static Color AccentAltColor = Color.FromArgb(47, 143, 138);
 
-    /// <summary>Playlist background (white "sunken" list).</summary>
-    public static Color ListBackColor = Color.FromArgb(255, 255, 255);
+    /// <summary>Normal text (charcoal ink).</summary>
+    public static Color LabelColor = Color.FromArgb(43, 43, 45);
+
+    /// <summary>Less important text (warm brown).</summary>
+    public static Color MutedColor = Color.FromArgb(122, 90, 68);
+
+    /// <summary>Text on the charcoal title bar.</summary>
+    public static Color TitleTextColor = Color.FromArgb(251, 238, 223);
+
+    /// <summary>Group line on the title bar (stripe orange).</summary>
+    public static Color TitleMutedColor = Color.FromArgb(237, 176, 74);
+
+    /// <summary>Playlist background (warm off-white "sunken" list).</summary>
+    public static Color ListBackColor = Color.FromArgb(255, 249, 241);
 
     /// <summary>Playlist text.</summary>
-    public static Color ListTextColor = Color.FromArgb(0, 0, 0);
+    public static Color ListTextColor = Color.FromArgb(43, 43, 45);
 
-    /// <summary>Row colour of the item that is playing (selection navy).</summary>
-    public static Color NowPlayingRowColor = Color.FromArgb(0, 0, 128);
+    /// <summary>Row colour of the item that is playing (stripe teal).</summary>
+    public static Color NowPlayingRowColor = Color.FromArgb(47, 143, 138);
 
     /// <summary>Text colour of the row that is playing.</summary>
     public static Color NowPlayingTextColor = Color.FromArgb(255, 255, 255);
 
-    /// <summary>Face colour of a toggle button that is on (looks pressed in).</summary>
-    public static Color ToggleOnColor = Color.FromArgb(214, 222, 238);
+    /// <summary>Face colour of a toggle button that is on (light teal, looks pressed in).</summary>
+    public static Color ToggleOnColor = Color.FromArgb(190, 227, 223);
 
-    /// <summary>Menu strip background.</summary>
-    public static Color MenuBackColor = Color.FromArgb(192, 192, 192);
+    /// <summary>Menu strip background (same cream as the menu row in the skin).</summary>
+    public static Color MenuBackColor = Color.FromArgb(248, 234, 219);
 
-    /// <summary>Highlight behind a menu item under the mouse.</summary>
-    public static Color MenuHighlightColor = Color.FromArgb(184, 196, 228);
+    /// <summary>Highlight behind a menu item under the mouse (soft orange).</summary>
+    public static Color MenuHighlightColor = Color.FromArgb(245, 204, 133);
 
     /// <summary>Font family used on the form (classic desktop look).</summary>
     public const string FontName = "Tahoma";
@@ -201,7 +222,7 @@ public static class Theme
         };
     }
 
-    /// <summary>Classic grey menu colours with a soft navy highlight (the menu stays visible so shortcuts work).</summary>
+    /// <summary>Cream menu colours with a soft orange highlight (the menu stays visible so shortcuts work).</summary>
     public sealed class MenuColorTable : ProfessionalColorTable
     {
         /// <inheritdoc/>

@@ -1,7 +1,7 @@
 # Credits and Licenses
 
 **Project:** Tapedeck (media player)
-**Group:** OOP Group 2 | **Section:** BSCS 2-A
+**Group:** OOP Group 3 | **Section:** BSCS 2-A
 
 ## Team
 
@@ -48,4 +48,4 @@ The group used AI assistants (Claude by Anthropic, and ChatGPT) to help explain 
 ## Notes
 
 - Items marked TODO must be completed before submission.
-- Everything not listed above was written by the members of OOP Group 2.
+- Everything not listed above was written by the members of OOP Group 3.

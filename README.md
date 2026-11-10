@@ -2,7 +2,7 @@
 
 A Winamp-style desktop media player in **C# Windows Forms (.NET 8)** with **LibVLCSharp**. It gathers mp3 and mp4 files into a library saved in `Library.txt`, plays them through an original skin, and adds **favorites and star ratings** as our enhancement.
 
-**Course:** OOP10 · **Instructor:** Prof. Ulysses Raymond F. Monsale · **Group:** OOP Group 2 · BSCS 2-A
+**Course:** OOP10 · **Instructor:** Prof. Ulysses Raymond F. Monsale · **Group:** OOP Group 3 · BSCS 2-A
 
 > 🆕 **New to Git/GitHub?** Start with **[GETTING_STARTED.md](GETTING_STARTED.md)** — one-time setup, your branch, and the exact commands to push each of your tasks.
 

@@ -50,6 +50,14 @@ public partial class TapedeckForm : BasePlayerForm
         listView1.ShowItemToolTips = true;
         listView1.Resize += (s, e) => FitColumns();
         FitColumns();
+        ClientSizeChanged += (s, e) => PlaceStatusBar();
+        PlaceStatusBar();
+
+        // Controls added earlier in the designer sit on top of later ones. At high display
+        // scaling (200%) an overlapping label painted over the Add button and the left edge
+        // of Add Folder, so the library buttons and rating controls are raised to the top.
+        foreach (Control control in new Control[] { btnAdd, btnAddFolder, btnRemove, btnFavorite, lblRating, cboRating })
+            control.BringToFront();
 
         tmrElapsed.Interval = ElapsedIntervalMs;
         tmrElapsed.Tick += tmrElapsed_Tick;
@@ -128,7 +136,7 @@ public partial class TapedeckForm : BasePlayerForm
 
     private void StyleLabels()
     {
-        // Title bar: white text on the navy bar painted in the skin.
+        // Title bar: cream text on the charcoal bar painted in the skin.
         lblAppTitle.BackColor = Color.Transparent;
         lblAppTitle.ForeColor = Theme.TitleTextColor;
         lblGroup.BackColor = Color.Transparent;
@@ -217,6 +225,27 @@ public partial class TapedeckForm : BasePlayerForm
 
     // Windows display scaling enlarges the list but not its columns, which left the text cut off
     // ("LAN… Un…"). Share the list's width between the columns in the designed proportions instead.
+    // The status bar boxes are painted in the skin, which is stretched to the window. Display
+    // scaling (125%, 150%, 200%...) moves the designer labels by a slightly different amount, so
+    // at the bottom of the window they drifted below the boxes and the text was cut off. Placing
+    // the labels from the skin's own coordinates keeps them inside the boxes at any scaling.
+    private void PlaceStatusBar()
+    {
+        float sx = ClientSize.Width / (float)Theme.FormSize.Width;
+        float sy = ClientSize.Height / (float)Theme.FormSize.Height;
+        if (sx <= 0 || sy <= 0) return; // minimized
+
+        lblStatus.Bounds = ScaleSkinRect(new Rectangle(12, 591, 784, 22), sx, sy);
+        lblCount.Bounds = ScaleSkinRect(new Rectangle(810, 591, 158, 22), sx, sy);
+    }
+
+    private static Rectangle ScaleSkinRect(Rectangle r, float sx, float sy)
+    {
+        return Rectangle.FromLTRB(
+            (int)Math.Round(r.Left * sx), (int)Math.Round(r.Top * sy),
+            (int)Math.Round(r.Right * sx), (int)Math.Round(r.Bottom * sy));
+    }
+
     private void FitColumns()
     {
         // Always leave room for the vertical scroll bar, so adding items never adds a horizontal one.
