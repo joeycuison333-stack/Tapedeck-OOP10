@@ -104,7 +104,7 @@ namespace mediaPlayerPrj
             lblGroup.BackColor = Color.Transparent;
             lblGroup.Location = new Point(190, 17);
             lblGroup.Name = "lblGroup";
-            lblGroup.Text = "Group 3 | BSCS 2A";
+            lblGroup.Text = "OOP Group 2 | BSCS 2-A";
             //
             // btnMinimize
             //
@@ -163,7 +163,7 @@ namespace mediaPlayerPrj
             lblExtra.AutoEllipsis = true;
             lblExtra.Location = new Point(36, 482);
             lblExtra.Name = "lblExtra";
-            lblExtra.Size = new Size(380, 20);
+            lblExtra.Size = new Size(360, 20);
             lblExtra.Text = "";
             //
             // lblElapsed
