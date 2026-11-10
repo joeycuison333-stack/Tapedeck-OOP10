@@ -31,7 +31,7 @@ public static class TeamInfo
     public const string AppTitle = "Tapedeck";
 
     /// <summary>Group name shown on the splash screen and title bar.</summary>
-    public const string GroupName = "OOP Group 2";
+    public const string GroupName = "OOP Group 3";
 
     /// <summary>Class section.</summary>
     public const string Section = "BSCS 2-A";
