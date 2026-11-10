@@ -1,0 +1,47 @@
+@startuml sequence_play
+' Sequence diagram: User presses Play (docs/02a_UML_Use_Case_and_Sequence.md section 3.3). Owner: Heaven.
+' Render: java -jar plantuml.jar -tpng sequence_play.puml
+hide footbox
+skinparam shadowing false
+skinparam sequence {
+  ParticipantBackgroundColor #FFF8E7
+  ParticipantBorderColor #5A4632
+  LifeLineBorderColor #5A4632
+}
+
+actor User
+participant ":TapedeckForm" as Form
+participant "base\n:BasePlayerForm" as Base
+participant "File System" as FS
+participant ":MediaPlayer\n(LibVLC)" as VLC
+participant "tmrElapsed\n:Timer" as Timer
+
+User -> Form : btnPlay_Click()
+Form -> Form : Play()
+Form -> Base : base.Play()
+Base -> FS : File.Exists(item.FilePath)
+
+alt file is missing
+  FS --> Base : false
+  Base -> Form : SetStatus("File not found: ...")
+  Base -> Form : ShowError("This file was moved or deleted")
+else file exists
+  FS --> Base : true
+  Base -> VLC : Play(media)
+  Base -> Form : OnNowPlayingChanged(item)
+  Form -> Form : ShowNowPlaying(item)
+  Form -> Form : RefreshListView()
+  Form -> Form : SelectRow(CurrentIndex)
+end
+
+Form -> Form : UpdatePlayPauseButtons()
+
+loop every 500 ms while playing
+  Timer -> Form : tmrElapsed_Tick()
+  Form -> Base : ElapsedTime
+  Base -> VLC : Time
+  VLC --> Base : milliseconds
+  Base --> Form : TimeSpan
+  Form -> Form : lblElapsed = "00:01:12 / 00:03:25"
+end
+@enduml

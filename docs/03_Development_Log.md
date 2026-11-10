@@ -4,9 +4,14 @@ One entry per milestone. Each increment compiles and runs before it is committed
 
 ## M1 – Analysis and design (due Nov 10)
 - **Goals:** requirements list, use case and class diagrams, design concept sketch, private repository with all members and the instructor invited.
-- **Completed so far:** repository created and renamed to `Tapedeck-OOP10`, `.gitignore`, `README.md`, `PRD.md` with the full task division (`5199d3d`). FR1–FR13 and NFR1–NFR6 are defined in `PRD.md` Section 2–3.
-- **Not yet done:** requirements spec (`docs/01_Requirements.md`, Ammaar), use case and class diagrams (Heaven, Ammaar), design concept sketch (Maddox). These are each owned by a teammate and tracked as placeholders are replaced.
-- **Problems met:** none yet on Joey's side.
+- **Completed:**
+  - Repository created and renamed to `Tapedeck-OOP10`, `.gitignore`, `README.md`, `PRD.md` with the full task division (`5199d3d`).
+  - Requirements specification – problem statement, target users, scope, FR1–FR13, NFR1–NFR7, data format (`docs/01_Requirements.md`).
+  - Use case diagram with descriptions and two sequence diagrams, Play and Load Library (`docs/02a_UML_Use_Case_and_Sequence.md`, Heaven, PR #10 `docs/uml-deployment`).
+  - Class diagram with the OOP mapping (`docs/02b_UML_Class_and_Sorting.md`, `docs/diagrams/class_diagram.puml`).
+  - Design concept and Canva source link (`Docs/Design/`, Maddox, PR #8).
+- **Changed from plan:** NFR7 (performance) was added while writing the requirements specification.
+- **Problems met:** the group number and section were written two ways ("Group 3 · BSCS 2A" and "OOP Group 2 · BSCS 2-A"). We agreed on **OOP Group 2 · BSCS 2-A** and changed it everywhere (README, PRD, `.csproj`, docs, skin).
 - **Next steps:** M2 core classes (already underway below).
 
 ## M2 – Core logic (due Nov 10)
@@ -18,6 +23,7 @@ One entry per milestone. Each increment compiles and runs before it is committed
   - `4db4698` – `MediaFormats` supported-extension consts, dialog filter, and the single-switch `Create` factory.
   - `c18961e` – placeholder `Data/LibraryStore.cs`, `Data/FavoritesStore.cs`, `Core/LibrarySorter.cs` so the solution builds before Heaven/Ammaar replace them with the real file I/O and sorting logic.
 - **Changed from plan:** `MediaFormats.Create` is the only place that switches on media type (`"Audio"` / `"Video"`); every other class treats the playlist as `List<MediaItem>` polymorphically, per the course rule against type-check chains.
+- **Also completed:** `LibraryStore` with real file I/O – damaged lines skipped and counted, atomic save through a `.tmp` file (Heaven, PR #1 `feature/library-store`); `TapedeckForm.Library.cs` load / save / remove / reload / open in Notepad (Heaven, PR #2); first test cases TC01–TC24 (Genevieve, PR #6 `test/test-plan`).
 - **Problems met:** none — each class built clean on first pass.
 - **Next steps:** M3 player, skin and features (also underway).
 
@@ -32,9 +38,21 @@ One entry per milestone. Each increment compiles and runs before it is committed
   - `3175dec` – `TapedeckForm.Playback.cs`: Play/Pause/Stop/Next/Previous wiring, shuffle/repeat buttons, volume, seek bar, 500 ms elapsed-time timer.
   - `f69d049` – `TapedeckForm.Menu.cs`: File/Playback/Library/Help menu with keyboard shortcuts calling the same handlers as the buttons.
   - `78f0217` – real `Program.cs`: global unhandled-exception handler, `SplashForm` shown first, then `TapedeckForm`.
+  - `LibrarySorter`: hand-written insertion sort, binary search by title and partial-match search (Ammaar, PR #3 `feature/sorter`).
+  - Splash screen with logo, group, section and member cards that closes after 3 s or on click / key (Maddox, PR #4 and #5 `feature/splash`); Canva skin, logo and app icon (Maddox, PR #7 `design/canva-skin`).
+  - Sorting from the Library menu and column headers, and the search box with binary search then partial match (`TapedeckForm.SortSearch.cs`, Ammaar, PR #11 `feature/sort-search-form`).
+  - Enhancement – favorites and 1–5 star ratings: file side done (`FavoritesStore`, Heaven); the form side (`TapedeckForm.Favorites.cs`, Genevieve) is **in progress**.
 - **Changed from plan:** Play and Pause share one position on the skin and swap visibility instead of having separate always-visible buttons. `btnPlay_Click` (not the `Play` override) resolves the selected row, because `Next()` calls `Play()` directly and must not re-trigger row selection.
-- **Problems met:** `UI/TapedeckForm.cs` currently has an unused-field warning (`_updatingRating`) — expected, it is only read inside `UI/TapedeckForm.Favorites.cs`, which is still Genevieve's placeholder. Resolves once G5 lands.
-- **Next steps:** merge teammates' PRs as they replace their placeholders (sorter, library store, favorites, splash, team info, skin assets); re-build after every merge.
+- **Problems met and fixes (PR #9):**
+  - **Menu strip did not respond at 125%+ display scaling.** The menu was added in code at a fixed `y = 46` after the designer layout had been scaled, so the taller title-bar panel covered it and took its clicks. Fix: `PlaceMenu()` positions it under the scaled title bar and brings it to the front.
+  - **Playlist columns were cut off** ("LAN… Un…") because column widths are not scaled with the display. Fix: `FitColumns()` shares the list width between the columns.
+  - Missing XML comments on `TeamInfo`/`TeamMember` and a broken `</returns` tag in `LibrarySorter` (coding standard). Fixed; the build now has no warnings.
+- **Still open:**
+  - `TapedeckForm.Favorites.cs` is still the placeholder (Genevieve, FR8).
+  - The title, group line and menu names are painted into `tapedeck_skin.png` and also drawn by the labels, so they appear twice. The Canva export should leave that text out (Maddox).
+  - Team photos for Joey, Heaven, Ammaar and Genevieve in `Assets/Team` (the splash shows a placeholder until they are added).
+  - Retest the window at 100% and 125% scaling on Windows.
+- **Next steps:** M4 – run all test cases on `main`, bug log, user manual, deployment guide, Release build.
 
 ## M4 – Testing, documentation, deployment (due Nov 12)
 - **Goals:** test report and bug log, user manual, deployment guide, self-contained Release build, refactored code.
@@ -56,4 +74,5 @@ One entry per milestone. Each increment compiles and runs before it is committed
 | R5 | `btnPlay_Click` resolves the selected row; the `Play()` override does not. | `Next()`/`Previous()` call `Play()` directly — if row-selection logic lived in the override, calling `Next()` would re-read the old selected row instead of the new `CurrentIndex`. |
 | R6 | `AddFilesAsync` awaits metadata into a local variable before calling `Playlist.Add`. | `Playlist.Add(await ReadMediaItemAsync(...))` would evaluate `Playlist` before the await suspends; a sort or remove during the await could target the wrong list state. |
 | R7 | `TapedeckForm` split into one partial class per owner (`.View`, `.AddMedia`, `.Playback`, `.Menu`, `.Library`, `.SortSearch`, `.Favorites`). | Lets five people own whole files with zero merge conflicts (PRD Section 4), instead of five people editing one form file. |
-| R8 | Remove any unused starter sort methods (selection/bubble sort) once `Core/LibrarySorter.cs` is replaced. | *(pending — Ammaar's file is still the placeholder; revisit after `A1`–`A4` land)* |
+| R8 | Kept only insertion sort in `Core/LibrarySorter.cs`; the starter selection and bubble sort methods were removed. | The guide says to keep the chosen algorithm and delete the others; no unused code. |
+| R9 | `PlaceMenu()` and `FitColumns()` compute positions from the scaled layout instead of fixed pixel values. | One fix for every display scaling (NFR6) instead of separate layouts. |
