@@ -128,7 +128,7 @@ public partial class TapedeckForm : BasePlayerForm
 
     private void StyleLabels()
     {
-        // Title bar: white text on the navy bar painted in the skin.
+        // Title bar: cream text on the charcoal bar painted in the skin.
         lblAppTitle.BackColor = Color.Transparent;
         lblAppTitle.ForeColor = Theme.TitleTextColor;
         lblGroup.BackColor = Color.Transparent;
