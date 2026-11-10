@@ -1,0 +1,13 @@
+Audio|Good Song|Good Artist|00:03:25|C:\TapedeckTest\good_song.mp3|Good Album
+Video|Good Clip|Good Creator|00:01:10|C:\TapedeckTest\good_clip.mp4|1280x720
+
+Audio|Too Few Fields|Some Artist|00:02:00|C:\TapedeckTest\few_fields.mp3
+Audio|Too|Many|Fields|00:02:00|C:\TapedeckTest\many_fields.mp3|Some Album
+Audio|Bad Duration|Some Artist|three minutes|C:\TapedeckTest\bad_duration.mp3|Some Album
+Audio|Blank Path|Some Artist|00:02:00||Some Album
+Audio|Unsupported Format|Some Artist|00:02:00|C:\TapedeckTest\song.wav|Some Album
+Podcast|Unknown Type|Some Host|00:30:00|C:\TapedeckTest\episode.mp3|Some Show
+this line is not in the library format at all
+
+Audio|Missing File|Some Artist|00:04:00|C:\TapedeckTest\renamed_or_deleted.mp3|Some Album
+Video||Some Creator|00:00:45|C:\TapedeckTest\no_title.mp4|1920x1080
