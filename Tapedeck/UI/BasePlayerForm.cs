@@ -66,8 +66,16 @@ public class BasePlayerForm : Form, IMediaControls
     /// <summary>True when the form is being shown in the Visual Studio designer.</summary>
     protected static bool IsDesignTime
     {
-        get { return LicenseManager.UsageMode == LicenseUsageMode.Designtime; }
+        get { return _isDesignTime.Value; }
     }
+
+    // LicenseManager only works in the old in-process designer. The .NET 8 designer runs the form
+    // in a separate DesignToolsServer process from a WinFormsDesigner cache folder, where
+    // UsageMode reports Runtime, so the engine tried to start and showed a LibVLC error popup.
+    private static readonly Lazy<bool> _isDesignTime = new Lazy<bool>(() =>
+        LicenseManager.UsageMode == LicenseUsageMode.Designtime
+        || string.Equals(System.Diagnostics.Process.GetCurrentProcess().ProcessName, "DesignToolsServer", StringComparison.OrdinalIgnoreCase)
+        || AppContext.BaseDirectory.Contains("WinFormsDesigner", StringComparison.OrdinalIgnoreCase));
 
     /// <summary>True when an item is loaded and not paused.</summary>
     protected bool IsPlaying
