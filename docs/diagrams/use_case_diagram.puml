@@ -1,0 +1,63 @@
+@startuml use_case_diagram
+' Tapedeck use case diagram (docs/02a_UML_Use_Case_and_Sequence.md section 3.1). Owner: Heaven.
+' Render: java -jar plantuml.jar -tpng use_case_diagram.puml
+!pragma layout smetana
+left to right direction
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam usecase {
+  BackgroundColor #FFF8E7
+  BorderColor #5A4632
+}
+
+actor User
+actor "File System" as FS
+
+rectangle Tapedeck {
+  usecase "Load Library" as UC_Load
+  usecase "Add Media" as UC_Add
+  usecase "Play / Pause / Stop" as UC_Play
+  usecase "Next / Previous" as UC_Next
+  usecase "Volume / Seek" as UC_Volume
+  usecase "Show Elapsed Time" as UC_Elapsed
+  usecase "Shuffle / Repeat" as UC_Shuffle
+  usecase "Sort" as UC_Sort
+  usecase "Search" as UC_Search
+  usecase "Splash / About" as UC_About
+  usecase "Favorite / Rate" as UC_Fav
+  usecase "Remove" as UC_Remove
+  usecase "Open in Notepad" as UC_Notepad
+  usecase "Save Library" as UC_Save
+  usecase "Read Media Info" as UC_Read
+  usecase "Report Error" as UC_Error
+}
+
+User -- UC_Load
+User -- UC_Add
+User -- UC_Play
+User -- UC_Next
+User -- UC_Volume
+User -- UC_Elapsed
+User -- UC_Shuffle
+User -- UC_Sort
+User -- UC_Search
+User -- UC_About
+User -- UC_Fav
+User -- UC_Remove
+User -- UC_Notepad
+
+UC_Add ..> UC_Read : <<include>>
+UC_Add ..> UC_Save : <<include>>
+UC_Remove ..> UC_Save : <<include>>
+UC_Fav ..> UC_Save : <<include>>
+UC_Notepad ..> UC_Save : <<include>>
+UC_Sort ..> UC_Save : <<include>>
+
+UC_Load <.. UC_Error : <<extend>>
+UC_Play <.. UC_Error : <<extend>>
+UC_Add <.. UC_Error : <<extend>>
+
+UC_Load -- FS
+UC_Save -- FS
+UC_Read -- FS
+@enduml
