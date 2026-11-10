@@ -1,0 +1,116 @@
+@startuml
+title Tapedeck - UML Class Diagram
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+package "Core" {
+    abstract class MediaItem {
+        - title : string
+        - artist : string
+        - duration : TimeSpan
+        - filePath : string
+        + IsFavorite : bool
+        + Rating : int
+        + MediaType : string
+        + Extra : string
+        + ToFileLine() : string
+    }
+
+    class AudioItem {
+        - album : string
+        + MediaType : string
+        + Extra : string
+    }
+
+    class VideoItem {
+        - resolution : string
+        + MediaType : string
+        + Extra : string
+    }
+
+    interface IMediaControls {
+        + Play()
+        + Pause()
+        + Stop()
+        + Next()
+        + Previous()
+    }
+
+    class LibrarySorter {
+        + Compare(a, b, key)
+        + InsertionSort(items, key)
+        + BinarySearchByTitle(items, title)
+        + FindFirstContaining(items, text)
+    }
+
+    class MediaFormats {
+        + IsSupported(path)
+        + IsVideoFile(path)
+        + Create(...) : MediaItem
+    }
+}
+
+package "UI" {
+    class BasePlayerForm {
+        # Playlist : List<MediaItem>
+        # CurrentIndex : int
+        + Play()
+        + Pause()
+        + Stop()
+        + Next()
+        + Previous()
+        + SetVolume(percent)
+        + Seek(position)
+        # SetPlaylist(items)
+        # OnNowPlayingChanged(item)
+    }
+
+    class TapedeckForm {
+        - SortLibrary(key)
+        + SearchLibrary(text)
+        + ToggleFavorite()
+        + SetRating(stars)
+        - LoadLibraryFromFile()
+        - SaveLibraryToFile()
+        - TrySaveLibrary()
+    }
+}
+
+package "Data" {
+    class LibraryStore {
+        + DefaultPath : string
+        + Save(path, items)
+        + Load(path, skippedLines) : List<MediaItem>
+        + ParseLine(line) : MediaItem
+    }
+
+    class FavoritesStore {
+        + DefaultPath : string
+        + Save(path, items)
+        + Apply(path, items, skippedLines)
+    }
+}
+
+MediaItem <|-- AudioItem
+MediaItem <|-- VideoItem
+
+IMediaControls <|.. BasePlayerForm
+BasePlayerForm <|-- TapedeckForm
+
+TapedeckForm --> LibrarySorter : sorts and searches
+TapedeckForm --> LibraryStore : loads and saves
+TapedeckForm --> FavoritesStore : saves and restores
+TapedeckForm --> MediaFormats : uses indirectly through library loading
+LibraryStore --> MediaFormats : creates media items
+LibrarySorter ..> MediaItem : operates on
+FavoritesStore ..> MediaItem : updates favorite/rating data
+MediaFormats ..> MediaItem : creates
+
+note right of TapedeckForm
+  Favorites and ratings UI
+  are currently placeholders.
+  Persistence exists in FavoritesStore.
+end note
+
+@enduml
