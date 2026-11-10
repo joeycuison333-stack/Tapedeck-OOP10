@@ -70,12 +70,21 @@ public class BasePlayerForm : Form, IMediaControls
     }
 
     // LicenseManager only works in the old in-process designer. The .NET 8 designer runs the form
-    // in a separate DesignToolsServer process from a WinFormsDesigner cache folder, where
-    // UsageMode reports Runtime, so the engine tried to start and showed a LibVLC error popup.
+    // in a separate process (DesignToolsServer) and loads this project's DLL from a cache folder
+    // such as %LocalAppData%\Microsoft\VisualStudio\<version>\WinFormsDesigner\<random>\.
+    // There UsageMode reports Runtime, so the engine tried to start and showed a LibVLC error.
+    // Checking where our own DLL was loaded from works in every Visual Studio version.
     private static readonly Lazy<bool> _isDesignTime = new Lazy<bool>(() =>
-        LicenseManager.UsageMode == LicenseUsageMode.Designtime
-        || string.Equals(System.Diagnostics.Process.GetCurrentProcess().ProcessName, "DesignToolsServer", StringComparison.OrdinalIgnoreCase)
-        || AppContext.BaseDirectory.Contains("WinFormsDesigner", StringComparison.OrdinalIgnoreCase));
+    {
+        if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) return true;
+
+        string dll = typeof(BasePlayerForm).Assembly.Location ?? string.Empty;
+        if (dll.Contains("WinFormsDesigner", StringComparison.OrdinalIgnoreCase)) return true;
+
+        string process = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
+        return process.Contains("DesignTools", StringComparison.OrdinalIgnoreCase)
+            || process.Equals("devenv", StringComparison.OrdinalIgnoreCase);
+    });
 
     /// <summary>True when an item is loaded and not paused.</summary>
     protected bool IsPlaying
