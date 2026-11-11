@@ -10,7 +10,7 @@
 
 ## 7.1 Product Overview and Features
 
-**Tapedeck** is an original retro late-90s desktop media player designed for Windows 10 and Windows 11 (64-bit). Built in C# and Windows Forms (.NET 8) using Visual Studio 2026, Tapedeck combines modern audio/video decoding via LibVLCSharp with the tactile charm of a vintage cassette tape deck.
+**Tapedeck** is an original retro late-90s desktop media player designed for Windows 10 and Windows 11 (64-bit). Built in C# and Windows Forms (.NET 8), using Visual Studio 2026, Tapedeck combines modern audio/video decoding via LibVLCSharp with the tactile charm of a vintage cassette tape deck.
 
 ### Core Capabilities
 - **Universal Media Support:** Seamlessly catalogues and plays standard MPEG-1 Audio Layer III (`.mp3`) and MPEG-4 Part 14 Video (`.mp4`) files.
