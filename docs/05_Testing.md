@@ -74,7 +74,7 @@ Verify that Tapedeck meets all functional requirements (FR1–FR13) and non-func
 | Bug ID | Test Case | Severity | Description | Assigned Owner | Status | Fix Commit |
 |---|---|---|---|---|---|---|
 | *(Sample)* | TC14 | High | When Library.txt contains an empty line, app throws IndexOutOfRangeException. | Heaven | Resolved | `fix: skip blank lines in LibraryStore.Load` |
-| | | | No bugs found. All executed tests passed on main. | | | |
+| | | |  | | | |
 
 ---
 
