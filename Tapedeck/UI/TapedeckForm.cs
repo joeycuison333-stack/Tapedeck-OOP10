@@ -25,7 +25,7 @@ public partial class TapedeckForm : BasePlayerForm
     private const int RatingColumn = 4;
 
     // Share of the list width per column, in the order above (the designed widths 92/70/62/58/40).
-    private static readonly int[] ColumnWeights = { 92, 70, 62, 58, 40 };
+    private static readonly int[] ColumnWeights = { 80, 62, 64, 66, 48 };
     private const int ColumnMargin = 4;
 
     private readonly System.Windows.Forms.Timer tmrElapsed = new System.Windows.Forms.Timer();
@@ -57,8 +57,12 @@ public partial class TapedeckForm : BasePlayerForm
         listView1.ShowItemToolTips = true;
         listView1.Resize += (s, e) => FitColumns();
         FitColumns();
-        ClientSizeChanged += (s, e) => PlaceStatusBar();
-        PlaceStatusBar();
+        // These labels keep the size they are given. At 200% scaling Windows scaled the media
+        // line twice, so it grew over the elapsed time and the seek bar (bug B06).
+        foreach (Label label in new[] { lblTitle, lblArtist, lblExtra, lblElapsed })
+            label.AutoSize = false;
+        ClientSizeChanged += (s, e) => PlaceSkinControls();
+        PlaceSkinControls();
 
         // Controls added earlier in the designer sit on top of later ones. At high display
         // scaling (200%) an overlapping label painted over the Add button and the left edge
@@ -75,7 +79,9 @@ public partial class TapedeckForm : BasePlayerForm
     protected override void OnShown(EventArgs e)
     {
         base.OnShown(e);
-        if (!IsDesignTime) LoadLibraryFromFile();
+        if (IsDesignTime) return;
+        PlaceSkinControls(); // again, after Windows has finished scaling the window
+        LoadLibraryFromFile();
     }
 
     /// <summary>Status text goes on the form, because the title bar is hidden.</summary>
@@ -236,7 +242,7 @@ public partial class TapedeckForm : BasePlayerForm
     // scaling (125%, 150%, 200%...) moves the designer labels by a slightly different amount, so
     // at the bottom of the window they drifted below the boxes and the text was cut off. Placing
     // the labels from the skin's own coordinates keeps them inside the boxes at any scaling.
-    private void PlaceStatusBar()
+    private void PlaceSkinControls()
     {
         float sx = ClientSize.Width / (float)Theme.FormSize.Width;
         float sy = ClientSize.Height / (float)Theme.FormSize.Height;
@@ -244,6 +250,17 @@ public partial class TapedeckForm : BasePlayerForm
 
         lblStatus.Bounds = ScaleSkinRect(new Rectangle(12, 591, 784, 22), sx, sy);
         lblCount.Bounds = ScaleSkinRect(new Rectangle(810, 591, 158, 22), sx, sy);
+
+        // The Now Playing lines, elapsed time and seek bar are placed the same way (bug B06).
+        lblArtist.Bounds = ScaleSkinRect(new Rectangle(36, 460, 380, 22), sx, sy);
+        lblExtra.Bounds = ScaleSkinRect(new Rectangle(36, 482, 360, 20), sx, sy);
+        lblElapsed.Bounds = ScaleSkinRect(new Rectangle(400, 480, 166, 22), sx, sy);
+        trackSeek.Bounds = ScaleSkinRect(new Rectangle(30, 504, 540, 28), sx, sy);
+
+        // The Now Playing labels are transparent: a transparent label paints the window background
+        // over any control behind it, so the elapsed time and the seek bar must be in front.
+        lblElapsed.BringToFront();
+        trackSeek.BringToFront();
     }
 
     private static Rectangle ScaleSkinRect(Rectangle r, float sx, float sy)
