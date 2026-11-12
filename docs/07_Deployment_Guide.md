@@ -1,6 +1,6 @@
 # 8. Deployment Guide
 
-**Project:** Tapedeck (OOP10 media player) · **OOP Group 2 – BSCS 2-A** · **Author:** Heaven
+**Project:** Tapedeck (OOP10 media player) · **OOP Group 3 – BSCS 2-A** · **Author:** Heaven
 
 This guide explains how to turn the source code into a program that runs on any 64-bit Windows 10/11 computer **without Visual Studio or .NET installed** (NFR3), how to package it as `G3_BSCS2A_Release.zip`, and how to test it on a second computer.
 

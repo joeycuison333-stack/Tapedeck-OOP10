@@ -1,7 +1,7 @@
 # 2. UML Class Diagram and Sorting Analysis
 
 **Project:** Tapedeck – OOP10 Media Player  
-**Group:** Group 3 – BSCS 2-A  
+**Group:** OOP Group 3 – BSCS 2-A  
 **Author:** Ammaar
 
 ## 2.1 Class Diagram
