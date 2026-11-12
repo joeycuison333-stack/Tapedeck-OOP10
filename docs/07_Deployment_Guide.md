@@ -1,141 +1,96 @@
 # 8. Deployment Guide
 
-**Project:** Tapedeck (OOP10 media player) · **OOP Group 3 – BSCS 2-A** · **Author:** Heaven
-
-This guide explains how to turn the source code into a program that runs on any 64-bit Windows 10/11 computer **without Visual Studio or .NET installed** (NFR3), how to package it as `G3_BSCS2A_Release.zip`, and how to test it on a second computer.
+**Project:** Tapedeck (OOP10 media player) · **OOP Group 3 – BSCS 2-A**
+**Author:** Heaven · **Release build and second-computer test:** Joey Cuison · **Updated:** November 12, 2026 (Milestone 4)
 
 ---
 
-## 8.1 System requirements
+## 8.1 System Requirements
 
-| | To **run** Tapedeck (end user) | To **build** Tapedeck (developer) |
-|---|---|---|
-| Operating system | Windows 10 or 11, **64-bit** | Windows 10 or 11, 64-bit |
-| .NET | Not needed (included in the release) | .NET 8 SDK (installed with Visual Studio) |
-| Software | None – no VLC, no codecs | Visual Studio 2026 with the **.NET desktop development** workload |
-| Disk space | About **360 MB** unzipped (the ZIP is about 150 MB) | About 1 GB for the SDK, NuGet packages and build output |
-| Screen | 1024 × 680 or larger; tested at 100% and 125% scaling | – |
-| Files to play | `.mp3` and `.mp4` | – |
-
-## 8.2 Publish with Visual Studio
-
-1. Open `Tapedeck.sln` in Visual Studio 2026 and set the configuration to **Release**. Build once (**Ctrl+Shift+B**) and make sure there are **0 errors**.
-2. In **Solution Explorer**, right-click the **Tapedeck** project → **Publish…**
-3. Target: **Folder** → Next → Folder location: `bin\Release\publish\` → **Finish**.
-4. On the publish profile, click **Show all settings** and set:
-
-   | Setting | Value |
-   |---|---|
-   | Configuration | **Release** |
-   | Target framework | **net8.0-windows** |
-   | Deployment mode | **Self-contained** |
-   | Target runtime | **win-x64** |
-   | Produce single file | **Off** – LibVLC's native plugins must sit next to the .exe |
-   | Trim unused code | **Off** – Windows Forms does not support trimming |
-
-5. **Save**, then click **Publish**. When it finishes, click the folder link to open `Tapedeck\bin\Release\publish\`.
-
-## 8.3 Publish from the command line
-
-The project file already sets the Release settings (`RuntimeIdentifier` win-x64, `SelfContained` true, `PublishSingleFile` false, `PublishTrimmed` false), so no extra options are needed. From the repository folder, in PowerShell or the Developer Command Prompt:
-
-```powershell
-dotnet publish Tapedeck\Tapedeck.csproj -c Release -o Tapedeck\bin\Release\publish
-```
-
-The same command with every setting written out (gives the same result):
-
-```powershell
-dotnet publish Tapedeck\Tapedeck.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=false -p:PublishTrimmed=false -o Tapedeck\bin\Release\publish
-```
-
-## 8.4 Check the publish folder and zip it as G3_BSCS2A_Release.zip
-
-### What the publish folder must contain
-
-Check `Tapedeck\bin\Release\publish\` before zipping:
-
-| Item | Why it is needed |
-|---|---|
-| `Tapedeck.exe` | The program. Double-click it to start. |
-| `Tapedeck.dll`, `Tapedeck.runtimeconfig.json`, `Tapedeck.deps.json` | The compiled code and how .NET starts it. |
-| About 240 other `.dll` files (`System.*.dll`, `Microsoft.*.dll`, `coreclr.dll`, …) and language folders (`de`, `fr`, `ja`, …) | The .NET 8 runtime and Windows Forms, included because the build is self-contained. |
-| `LibVLCSharp.dll`, `LibVLCSharp.WinForms.dll` | The C# side of the playback engine. |
-| `libvlc\win-x64\` (`libvlc.dll`, `libvlccore.dll`, `plugins\`, …) | The native VLC engine that actually decodes mp3 and mp4. **Without it nothing plays.** |
-| `Assets\` (skin, buttons, `logo.png`, `logo.ico`) and `Assets\Team\` (member photos) | The skin and the splash screen. A missing image does not crash the app, but it falls back to plain colours. |
-
-Do **not** copy `Library.txt` or `Favorites.txt` from your own computer into the release – each user starts with an empty library, and the files are created next to `Tapedeck.exe` on first save.
-
-### Zip it
-
-1. Open `Tapedeck\bin\Release\publish\`.
-2. Make sure it has no `Library.txt` or `Favorites.txt` (delete them if you ran the program from this folder).
-3. Zip the **contents** of the folder (not the folder above it):
-   - **File Explorer:** select everything inside `publish` (Ctrl+A) → right-click → **Compress to → ZIP file** (Windows 11) or **Send to → Compressed (zipped) folder** (Windows 10) → rename it `G3_BSCS2A_Release.zip`.
-   - **PowerShell:**
-     ```powershell
-     Compress-Archive -Path Tapedeck\bin\Release\publish\* -DestinationPath G3_BSCS2A_Release.zip -Force
-     ```
-4. The ZIP should be about 150 MB.
-
-## 8.5 Test on a second computer
-
-Use a Windows 10/11 64-bit computer that has **never had Visual Studio or the .NET SDK installed** (a classmate's or a lab PC). Copy `G3_BSCS2A_Release.zip` and a few test files (at least one `.mp3` and one `.mp4`) to it.
-
-### Checklist
-
-| # | Check | Expected result |
-|---|---|---|
-| D1 | Right-click the ZIP → **Extract All** to `Documents\Tapedeck` (do not run it from inside the ZIP). | A `Tapedeck` folder with `Tapedeck.exe`, `libvlc\` and `Assets\`. |
-| D2 | Double-click `Tapedeck.exe`. If **"Windows protected your PC"** appears, click **More info → Run anyway**. | The splash screen shows the logo, title, group, section and every member's photo, name and role, then closes after about 3 seconds or on a click/key. |
-| D3 | Look at the main window. | The retro skin, logo and button images load; text is readable. Status: "The library is empty. Add files with Ctrl+O." |
-| D4 | **Add Folder** (Ctrl+Shift+O) with the test files. | Every mp3/mp4 appears with title, artist, album or resolution and duration. |
-| D5 | Play an mp3, then an mp4. | Sound plays; the video shows in the video area; elapsed time counts up (00:00:05 / 00:03:25). |
-| D6 | Pause, Stop, Next, Previous, volume, seek bar, Shuffle, Repeat, and their keyboard shortcuts (Help > Keyboard Shortcuts). | Each one works from the button and from the shortcut. |
-| D7 | Close the program and open it again. | The same items load ("Loaded N item(s) from Library.txt"). `Library.txt` is now next to `Tapedeck.exe`. |
-| D8 | Rename one test file in File Explorer, then reopen Tapedeck and try to play it. | Its row is greyed out, the status counts 1 missing file, and playing it shows "This file was moved or deleted". No crash. |
-| D9 | Close Tapedeck, copy `docs\test-data\Library_corrupt.txt` over `Library.txt`, and start it again. | "7 damaged line(s) in Library.txt were skipped." and 4 items load. No crash. |
-| D10 | File > Open Library in Notepad (Ctrl+L), delete one line, save, then File > Reload Library (Ctrl+Shift+L). | Notepad opens `Library.txt`; after reloading, the deleted item is gone. |
-| D11 | Mark a favorite and give a rating, close and reopen. | The ♥ and ★ come back (`Favorites.txt` next to the .exe). |
-| D12 | Windows **Settings → Display → Scale: 125%**, sign out and in, and start Tapedeck. | The window and text still fit and are readable (NFR6). |
-| D13 | Copy the extracted folder into `C:\Program Files\Tapedeck` and add a file. | A clear message that the library could not be saved, with the hint to move the program to Documents. No crash. |
-
-### Test results
-
-*To be filled in on the second computer (task H13).*
+**Table 11. Deployment system requirements**
 
 | | |
 |---|---|
-| **Tester** | |
-| **Date** | |
-| **Computer** (brand / model) | |
-| **Windows version** (Settings → System → About) | |
-| **.NET or Visual Studio installed?** | |
-| **Display scaling** | |
-| **Release ZIP** (file name and size) | |
+| **Operating system** | Windows 10 or 11, 64-bit |
+| **.NET 8 Desktop Runtime** | **Not required** on the target computer. The application is published as a self-contained build that includes the .NET 8 runtime. |
+| **Development tools (to build)** | Visual Studio 2026 (or 2022) with the .NET desktop development workload; internet access for the first NuGet restore |
 
-| # | Result (Pass / Fail) | Notes (what happened, screenshot file name) |
+## 8.2 Publish Configuration
+
+**Table 12. Publish settings**
+
+| Setting | Required by the guide | Setting used by the team |
 |---|---|---|
-| D1 | | |
-| D2 | | |
-| D3 | | |
-| D4 | | |
-| D5 | | |
-| D6 | | |
-| D7 | | |
-| D8 | | |
-| D9 | | |
-| D10 | | |
-| D11 | | |
-| D12 | | |
-| D13 | | |
+| **Configuration** | Release | Release |
+| **Target framework** | net8.0-windows | net8.0-windows |
+| **Target runtime** | win-x64 | win-x64 |
+| **Deployment mode** | Self-contained (or framework-dependent, if documented) | Self-contained |
+| **Produce single file** | Off | Off |
+| **Trim unused code** | Off | Off |
+| **Assets files** | Copy to Output Directory | Copy to Output Directory |
 
-## 8.6 Known limitations
+These Release settings are written in `Tapedeck.csproj`, so the publish command needs no extra options.
 
-- **Windows 64-bit only.** The release is built for win-x64; it does not run on 32-bit Windows, macOS or Linux.
-- **Only `.mp3` and `.mp4`** can be added; other formats are skipped with a message.
-- **Large download.** The release includes the whole .NET runtime and the VLC engine, so it is about 360 MB unzipped. It also contains a `libvlc\win-x86\` folder (about 95 MB) that the 64-bit build never uses.
-- **Unsigned program.** Windows SmartScreen may warn the first time (**More info → Run anyway**). A downloaded ZIP may also be marked as blocked: right-click the ZIP → **Properties → Unblock** before extracting.
-- **Library files sit next to `Tapedeck.exe`.** In a protected folder such as `C:\Program Files`, the library cannot be saved; keep the program in Documents or on the Desktop.
-- **Library entries are file paths.** If a media file is moved or renamed, its entry is greyed out and must be removed and added again.
-- **One library per copy of the program.** There are no separate user accounts (out of scope).
+## 8.3 Build and Publish Procedure
+
+1. Set the build configuration to **Release**; build once (Ctrl+Shift+B) and confirm 0 errors and that every file in Assets is set to Copy to Output Directory.
+2. Right-click the project in Solution Explorer and choose **Publish**; choose Target: **Folder** and the location `bin\Release\publish`.
+3. In the publish settings, apply the values in Section 8.2 (Release, net8.0-windows, win-x64, Self-contained, single file off, trimming off), then click **Publish**.
+4. Command-line equivalent, from the repository folder:
+
+   ```powershell
+   dotnet publish Tapedeck\Tapedeck.csproj -c Release -o Tapedeck\bin\Release\publish
+   ```
+
+5. Check that the publish folder contains **`Tapedeck.exe`**, the **Assets** folder (skin, buttons, logo, icon and `Assets\Team` photos) and the **`libvlc\win-x64`** folder with its plug-ins. Delete `Library.txt` and `Favorites.txt` if the program was run from this folder.
+6. Close Tapedeck, then compress the contents of the publish folder to **`G3_BSCS2A_Release.zip`**:
+
+   ```powershell
+   Compress-Archive -Path Tapedeck\bin\Release\publish\* -DestinationPath G3_BSCS2A_Release.zip -Force
+   ```
+
+   The ZIP is submitted through the course page and is not committed to the repository (`*.zip` is in `.gitignore`).
+
+## 8.4 Application Icon and Logo
+
+The group logo, a cassette tape with a play symbol, was designed in Canva by Christian Maddox Rivera and saved as `Assets\logo.png` with its build property set to Copy to Output Directory. This image is shown on the splash screen and in the title bar of the main window. It was also saved as a multi-size icon file, `Assets\logo.ico`, which is set as the application icon in the project properties (`<ApplicationIcon>Assets\logo.ico</ApplicationIcon>`), so it appears on `Tapedeck.exe`, the taskbar and Alt+Tab. In the same project properties the product name is set to **Tapedeck**, the company to **OOP Group 3 - BSCS 2-A**, the authors to the five members, and the version to **1.0.0**, so the file properties of the program show the team's details.
+
+![Tapedeck logo](../Tapedeck/Assets/logo.png)
+
+**Figure 7. Tapedeck logo and application icon**
+
+## 8.5 Installation Test on a Different Computer
+
+**Table 13. Second-computer installation test**
+
+| | |
+|---|---|
+| **Computer** | A classmate's laptop (BSCS 2-A), not used for development |
+| **Operating system / version** | Windows 11 Pro, 64-bit |
+| **Visual Studio installed?** | No (clean test environment) |
+| **Release package** | `G3_BSCS2A_Release.zip` (self-contained, win-x64) |
+| **Extracted to** | A writable folder in the user profile |
+| **Date / tester** | November 12, 2026 / Joey Cuison |
+| **Result** | Pass |
+| **Issues found** | None. Splash screen, playback, saving and reloading the library, and error handling all worked (`05_Testing.md` Table 5). |
+
+## 8.6 Known Limitations
+
+- The application targets 64-bit Windows (x64) only.
+- Only MP3 and MP4 files are supported; other formats are skipped with a message.
+- The application folder must be writable, because `Library.txt` and `Favorites.txt` are created beside the .exe.
+- The self-contained release is large (about 360 MB extracted) because it includes the .NET runtime and the VLC engine.
+- The program is not digitally signed, so Windows SmartScreen may warn on the first start.
+- The library stores file paths; a moved or renamed file must be added again.
+- At 200% display scaling the elapsed time and seek bar are covered (bug B06, fix pending retest).
+- Because the LibVLC engine draws the video directly, no controls or graphics can be placed on top of the video panel.
+
+## 8.7 Refactoring Done in Milestone 4
+
+As required by guide Section 5.2, the refactoring made in this milestone is recorded with the reason for it. The complete record (R1–R10) is in `03_Development_Log.md`.
+
+**Table 14. Milestone 4 refactoring**
+
+| No. | Refactoring | Why |
+|---|---|---|
+| R10 | `BasePlayerForm.PrepareEngineAsync()` loads the LibVLC engine on a background thread; `Program.cs` starts it before showing the splash screen and passes it to the main form. The original constructors are kept so the Visual Studio designer still opens the forms. | Fixes TD-01: the engine's 1–2 s load now overlaps with the splash screen instead of delaying the main window. |

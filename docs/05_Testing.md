@@ -1,116 +1,137 @@
-# 6. Test Plan, Test Cases, and Bug Log
+# 6. Testing Documentation
 
-**Project:** Tapedeck (OOP10 media player) · **OOP Group 3 – BSCS 2-A** · **Author:** Valencia Genevieve (Genevieve)  
-**Branch:** `test/test-plan` · **Date:** November 9, 2026 · **M4 execution pass:** Joey Cuison, November 12, 2026  
+**Project:** Tapedeck (OOP10 media player) · **OOP Group 3 – BSCS 2-A**
+**Test cases and test plan:** Valencia Genevieve · **Release build, display scaling and second-computer checks:** Joey Cuison
+**Updated:** November 12, 2026 (Milestone 4)
 
 ---
 
 ## 6.1 Test Plan
 
-### Objectives
-Verify that Tapedeck meets all functional requirements (FR1–FR13) and non-functional requirements (NFR1–NFR6) as outlined in `PRD.md` Sections 2 and 3. Testing validates media playback integrity via LibVLCSharp, persistent storage of library and user ratings, custom retro UI rendering and event dispatch, edge cases, and robust negative error handling without application crashes.
+### 6.1.1 Objectives, Scope and Strategy
 
-### Test Environment
-- **Operating System:** Windows 11 / Windows 10 (64-bit, x64 architecture).
-- **Target Framework:** .NET 8.0 Windows Forms (`net8.0-windows`).
-- **Development Tool:** Visual Studio 2026.
-- **Display Scaling:** Tested at 100% and 125% Windows DPI scaling.
-- **Playback Engine Dependencies:** LibVLCSharp.WinForms 3.9.0 and VideoLAN.LibVLC.Windows 3.0.21 native binaries (`libvlc\win-x64`).
+The test plan verifies that Tapedeck meets the functional requirements FR1–FR13 in the requirements specification (`01_Requirements.md`), handles error conditions without crashing, and runs from the self-contained Release build on a computer without Visual Studio. Testing is manual and follows the Appendix B.1 test case template of the project guide.
 
-### Test Media Suite
-- Standard MP3 audio tracks (with varied ID3 metadata: Title, Artist, Album, Duration).
-- Audio files with missing ID3 tags (testing fallback values).
-- Standard MP4 video files with varied resolutions (e.g. 1080p `1920x1080`, 720p `1280x720`).
-- Unsupported audio/video files (e.g. `.wav`, `.mkv`, `.flac`, `.avi`).
-- Non-media files (e.g. `.txt`, `.jpg`, `.pdf`, `.exe`).
-- Corrupt and malformed test data: `docs/test-data/Library_corrupt.txt`.
-- Missing media test items (files renamed or deleted after library addition).
+- **Functional testing:** adding files and folders, item information, saving and reloading the library, playback controls, volume and seek, playlist and Now Playing, sorting, searching, shuffle, repeat, elapsed time, and the favorites and star ratings enhancement.
+- **Error and exception testing:** missing file, corrupt lines in `Library.txt`, empty library, unsupported format, a file locked by another program, and a folder renamed while the program was closed.
+- **Interface testing:** splash screen, menu strip and keyboard shortcuts, and skin readability at 100%, 125% and 200% display scaling.
 
-### Execution Methodology
-1. **Automated Unit / Class Verification:** Validate data validation, parsing rules in `LibraryStore` and `FavoritesStore`, and sorting algorithms in `LibrarySorter`.
-2. **Interactive Functional Testing:** Execute test cases TC01 through TC24 on the integrated build (`main` branch).
-3. **Negative & Edge Testing:** Specifically stress-test empty library states, missing files, damaged persistence files, unsupported file imports, single-item collections, and playback boundary conditions.
-4. **Bug Logging & Verification:** Log any discrepancy in Section 6.3, assign it to the respective component owner, and re-test following the fix commit.
+### 6.1.2 Test Environment
 
-### M4 execution pass (Nov 12, 2026)
+**Table 1. Test environment**
 
-Run on `feature/splash` (built from the latest merged `main`) ahead of the M4 submission. Two methods were used, and the Actual Result / Pass-Fail columns below say which one covered each test case:
+| Item | Details |
+|---|---|
+| **Development test machine** | Huawei MateBook 14, Windows 11 Home Single Language (25H2, Build 26200.9711), 64-bit, Intel Core Ultra 5 125H (3.60 GHz), 16.0 GB RAM, Visual Studio 2026; tested at 100% and 200% display scaling |
+| **Build tested** | Debug build from Visual Studio and the self-contained Release build (win-x64) |
+| **Second computer (no Visual Studio)** | A classmate's laptop (BSCS 2-A), Windows 11 Pro, 64-bit, no Visual Studio installed (Section 6.2.2 and `07_Deployment_Guide.md` Section 8.5) |
+| **Playback engine** | LibVLCSharp.WinForms 3.9.0, VideoLAN.LibVLC.Windows 3.0.21 |
+| **Test media** | MP3 files with and without ID3 tags; MP4 files at 1280×720 and 640×480; unsupported files (`.wav`, `.txt`, `.jpg`); `docs/test-data/Library_corrupt.txt` |
+| **Tester(s)** | Valencia Genevieve (test cases), Joey Cuison (Release build, display scaling and second-computer checks) |
+| **Test period** | November 9–12, 2026 |
 
-- **Automated harness ("Automated – Pass/Fail").** `LibraryStore`, `FavoritesStore`, `LibrarySorter`, `MediaFormats`, and `MediaItem` have no WinForms dependency, so they were copied into a throwaway console project and driven with 55 assertions reproducing TC03, TC06, TC07, TC13 (search/sort side), TC14, TC16–TC20, TC22 and TC27 at the data/logic level, including the exact `docs/test-data/Library_corrupt.txt` file. **Result: 55/55 passed, 0 failed.** No code changes were needed in these classes.
-- **Build + launch smoke test ("Smoke-tested").** `dotnet build` (Debug and Release) with 0 warnings / 0 errors, then the real `Tapedeck.exe` was launched and closed automatically (via `Start-Process` + window-title polling + screen capture) several times to confirm the splash renders every member's photo and name, auto-dismisses after ~3 s, and the main window comes up without an exception. This pass is where the startup-gap bug in Section 6.3 (TD-01) was found and then re-measured after the fix.
-- **Code-path review ("Reviewed, not run").** Test cases that need a human clicking buttons and real `.mp3`/`.mp4` files (playback, seeking, drag-free volume, shuffle/repeat cycling through several real tracks) were traced against the current source instead of executed, because no GUI-automation tool was available in this session. No defects were found, but these rows still need one interactive pass by a teammate with real media before the release is signed off — see Section 6.4.
+### 6.1.3 Test Cases
 
----
+The test cases below follow the Appendix B.1 format. The Actual result and Pass / Fail columns were filled in after each test was executed. Negative tests are marked **[N]**.
 
-## 6.2 Test Cases (TC01–TC24)
+**Table 2. Test cases**
 
 | ID | Feature | Steps | Expected result | Actual result | Pass / Fail |
 |---|---|---|---|---|---|
-| **TC01** | FR1 – Add Media Files | 1. Click **Add** button (or press `Ctrl+O`).<br>2. In the OpenFileDialog, select one `.mp3` and one `.mp4` file.<br>3. Click Open. | Both files are read and appended to the playlist (`listView1`). Status bar displays `"Added 2 item(s)."`. Total item counter updates (`lblCount`). Changes are saved to `Library.txt`. | `AddFilesAsync` traced; logic matches expected result. Not run interactively (needs real media files and a human on the OpenFileDialog). | Reviewed only |
-| **TC02** | FR1 – Add Folder Recursively | 1. Click **Add Folder** button (or press `Ctrl+Shift+O`).<br>2. In the FolderBrowserDialog, select a folder containing `.mp3` and `.mp4` files across root and subfolders.<br>3. Click Select Folder. | Recursively enumerates files via `Directory.EnumerateFiles(..., RecurseSubdirectories)`. All valid supported audio and video files are added to the playlist. Status bar displays `"Added N item(s)."`. | `EnumerationOptions { RecurseSubdirectories = true }` confirmed in source. Not run interactively. | Reviewed only |
-| **TC03** | FR1 – Duplicate Media Detection | 1. Add a media file (e.g., `song1.mp3`).<br>2. Click **Add** button again and select the exact same file (`song1.mp3`). | File is detected as already in library via `ContainsPath()`. File is not duplicated. Status bar shows `"Added 0 item(s). 1 already in the library."`. | `ContainsPath` compares `FilePath` case-insensitively and runs before the file is read, so a re-add never appends a duplicate; confirmed by code trace. Not run interactively. | Reviewed only |
-| **TC04** | FR1, FR7 – **[Negative]** Unsupported File Formats | 1. Click **Add** button (`Ctrl+O`).<br>2. Select files with unsupported extensions (e.g. `sample.wav`, `notes.txt`, `image.jpg`).<br>3. Click Open. | Unsupported files are filtered and skipped by `MediaFormats.IsSupported()`. A warning dialog (`ShowError`) is shown: `"Added 0 item(s). N skipped: only .mp3 and .mp4 are supported."`. Playlist remains unchanged and app does not crash. | `MediaFormats.IsSupported` verified by the automated harness (`.wav` rejected, `.mp3`/`.mp4` accepted, case-insensitive). The dialog wording was traced in `AddFilesAsync`, not driven interactively. | Automated (format check) – Pass |
-| **TC05** | FR2 – Media Metadata Display (Audio vs Video) | 1. Add an audio file with ID3 tags and an MP4 video file.<br>2. Inspect the columns in `listView1` (Title, Artist, Album/Res, Length).<br>3. Select the audio file, then select the video file. | Audio file shows Title, Artist, Album name in Album/Res column, and formatted duration (`hh:mm:ss`). Video file shows Title, Artist, video resolution (e.g. `1920x1080`) in Album/Res column, and duration. Missing tags display fallback constants (`Unknown Title`, `Unknown Artist`, etc.). | `AudioItem.Extra`/`VideoItem.Extra` and the fallback constants verified directly by the automated harness (blank title/artist/album all fall back correctly). Reading real ID3/MP4 tags through LibVLC was not exercised with real media files this session. | Partially automated – Pass |
-| **TC06** | FR3 – Save Library & Startup Reload | 1. Add multiple media items to the library.<br>2. Close Tapedeck via the Close button (`btnClose` or `Alt+F4`).<br>3. Inspect the file `Library.txt` generated next to `Tapedeck.exe`.<br>4. Relaunch Tapedeck. | `Library.txt` contains entries in the 6-field pipe format (`Type\|Title\|Artist\|hh:mm:ss\|FilePath\|Extra`). On startup, `LoadLibraryFromFile` reloads all entries into `listView1` and displays status `"Loaded N item(s) from Library.txt."`. | Automated harness: `LibraryStore.Save` then `LibraryStore.Load` round-trips 3 mixed audio/video items with title, type and resolution all preserved exactly. | Automated – Pass |
-| **TC07** | FR3, FR10 – Reload Library & Open in Notepad | 1. With a populated library, select `File > Open Library in Notepad` (`Ctrl+L`).<br>2. Verify Notepad opens with `Library.txt`. Edit a title in Notepad and save the file.<br>3. Switch back to Tapedeck and select `File > Reload Library` (`Ctrl+Shift+L`). | Notepad opens `Library.txt`. After saving in Notepad and clicking Reload Library in Tapedeck, the library reloads and reflects the edited title without requiring application restart. | `ReloadLibrary()` calls the same `LoadLibraryFromFile()` verified under TC06, without saving first, so Notepad edits are picked up. Launching the real Notepad process was not driven interactively. | Reviewed only |
-| **TC08** | FR4 – Play, Pause, and Stop Controls | 1. Select a track and click **Play** (or press `F5`).<br>2. Verify playback starts and Play button toggles to Pause.<br>3. Click **Pause** (or press `F6`). Verify playback pauses and button toggles to Play.<br>4. Click **Play** to resume from paused position.<br>5. Click **Stop** (or press `F7`). | Media starts playing smoothly; Pause stops playback without unloading; resuming starts from paused timestamp; Stop unloads playback, resets elapsed timer to `00:00:00`, resets seek bar, and restores Play button visibility. | Build succeeds, `BasePlayerForm.Play/Pause/Stop` traced and match expected result. Not run with real media (needs manual interaction). | Reviewed only |
-| **TC09** | FR4 – Next & Previous Navigation | 1. Load at least 3 tracks into the library. Start playing track 1.<br>2. Click **Next** (`btnNext` or `Ctrl+Right`).<br>3. Click **Next** again until reaching the last track, then click **Next** once more.<br>4. Click **Previous** (`btnPrevious` or `Ctrl+Left`). | Next advances sequentially to track 2, then track 3. Advancing past the last track wraps around to track 1 (`(CurrentIndex + 1) % Count`). Previous moves backward; pressing Previous on the first track wraps around to the last track. | Wrap-around arithmetic traced and matches expected result (`(CurrentIndex + 1) % Count`, `(CurrentIndex - 1 + Count) % Count`). Not run interactively. | Reviewed only |
-| **TC10** | FR4, FR10 – Volume Adjustment & Shortcuts | 1. While playing audio, adjust the volume trackbar `trackVolume`.<br>2. Press `Ctrl+Up` repeatedly.<br>3. Press `Ctrl+Down` repeatedly. | Volume changes smoothly between 0 and 100 in LibVLC. `lblVolume` displays `"Vol {value}"`. Shortcuts `Ctrl+Up` / `Ctrl+Down` increase / decrease volume by step (5%) and clamp at 0 and 100 without exceptions. | `ChangeVolume` clamps via `Math.Max`/`Math.Min` against the trackbar's own min/max; confirmed by code trace. Not run interactively. | Reviewed only |
-| **TC11** | FR4, FR11 – Seeking Position via Trackbar | 1. While playing media, drag the `trackSeek` slider to the middle and release the mouse.<br>2. Focus the seek slider and press `Left Arrow` / `Right Arrow`. | Track position jumps immediately to the selected position (`Seek(trackSeek.Value / 1000f)`). Audio/video playback resumes synchronously from that timestamp without stutter or crash. | `Seek()` clamps to [0,1] and checks `IsSeekable`; confirmed by code trace. Needs real media to verify audibly/visually. | Reviewed only |
-| **TC12** | FR5 – Playlist Selection & Now Playing Display | 1. Load multiple tracks. Double-click track 2 (or select track 2 and press `Enter`).<br>2. Inspect the Now Playing area and list row highlighting. | Track 2 begins playback immediately. Now Playing area displays track Title in large bold text (`lblTitle`), Artist (`lblArtist`), and MediaType + Extra info (`lblExtra`). Track 2 row in `listView1` is highlighted in navy (`NowPlayingRowColor`) with bold white text. Window title updates to `Title - Artist - Tapedeck`. | `OnNowPlayingChanged`/`ShowNowPlaying`/`RefreshListView` traced and match expected result. Not run interactively. | Reviewed only |
-| **TC13** | FR4, FR7 – **[Negative]** Empty Library Operations | 1. Ensure playlist is completely empty (no files added, or delete `Library.txt` prior to launch).<br>2. Click **Play** (`F5`).<br>3. Click **Next**, **Previous**, **Stop**, **Pause**.<br>4. Click **Remove** and attempt to **Search**. | Clicking Play displays a clear warning message `"The library is empty. Add some files first."` via `ShowError`. Next/Previous/Stop/Pause return safely without null reference exceptions. Remove and Search show status indicating empty library. No crash occurs (NFR1). | Automated harness: `BinarySearchByTitle`/`FindFirstContaining` on an empty list both return -1 without throwing; `LibraryStore.Load` on a missing file returns an empty list without throwing. `Play()` on an empty `Playlist` traced and matches expected result. UI click-through not run. | Partially automated – Pass |
-| **TC14** | FR3, FR7 – **[Negative]** Corrupt Lines in `Library.txt` | 1. Close Tapedeck.<br>2. Replace `Library.txt` with `docs/test-data/Library_corrupt.txt` (containing lines with wrong field counts, invalid duration strings, blank paths, unknown types, and non-conforming plain text).<br>3. Launch Tapedeck. | `LibraryStore.Load` skips all malformed lines without throwing unhandled exceptions. Only valid lines (e.g. good audio/video) load into `listView1`. `ShowError` reports: `"{N} damaged line(s) in Library.txt were skipped. The rest of the library was loaded."`. Status bar displays count of loaded valid items. | Automated harness loaded the real `docs/test-data/Library_corrupt.txt` through `LibraryStore.Load`: **4 valid items loaded, exactly 7 damaged lines skipped**, no exception thrown. Matches the number already recorded in `07_Deployment_Guide.md` D9. | Automated – Pass |
-| **TC15** | FR4, FR7 – **[Negative]** Missing / Deleted Media File Handling | 1. Add a valid `.mp3` file to the library.<br>2. Outside the app (in File Explorer), delete or rename the underlying media file on disk.<br>3. In Tapedeck, select `File > Reload Library` (or observe row on next launch).<br>4. Attempt to play the missing item (press **Play** or double-click the item). | Missing item is displayed in `listView1` with greyed-out text (`Theme.MutedColor`). Clicking Play detects `!File.Exists(item.FilePath)`: playback stops, status bar displays `"File not found: {path}"`, and a modal warning is displayed: `"This file was moved or deleted:\n\n{path}"`. Application remains responsive. | `CountMissingFiles`, `RefreshListView` greying and `BasePlayerForm.Play`'s `File.Exists` check all traced and match expected result. Not run interactively. | Reviewed only |
-| **TC16** | FR6 – Search by Title (Binary Search) & Partial Match | 1. Add multiple items with diverse titles and artists (e.g., "Bohemian Rhapsody", "Hotel California", "Imagine").<br>2. Type "Imagine" into `txtSearch` and click **Search** (or press `Enter`).<br>3. Type "Hotel" into `txtSearch` and press `Enter`.<br>4. Type part of an artist name into `txtSearch` and press `Enter`. | For exact title matches, `BinarySearchByTitle` executes (after sorting by title) and selects the matching row. Status bar displays `"Found via binary search: {Title}"`. For partial title or artist matches, `FindFirstContaining` finds and highlights the matching row, reporting `"Found via partial search: {Title}"`. | Automated harness, with the exact 3-track set from the test case ("Bohemian Rhapsody" / "Hotel California" / "Imagine"): exact-title and case-insensitive binary search both found the right index; partial title match ("Hotel") and partial artist match ("Lennon") both found via `FindFirstContaining`. | Automated – Pass |
-| **TC17** | FR6 – **[Negative]** Search with No Match & Blank Query | 1. With a populated library, leave `txtSearch` empty and click **Search**.<br>2. Type `"NonExistentSongTitleXYZ"` into `txtSearch` and click **Search**. | For blank input, status bar displays `"Type a title or artist to search for."`. For non-existent term, both binary search and partial search return `-1`. Status bar displays `"No match for 'NonExistentSongTitleXYZ'."`. Current selection remains stable without exceptions. | Automated harness: blank/whitespace query and a non-existent title both returned -1 from `BinarySearchByTitle`/`FindFirstContaining` without throwing. Exact status-bar wording traced in `SearchLibrary`, not driven interactively. | Automated – Pass |
-| **TC18** | FR12 – Hand-written Insertion Sort & Playing Item Retention | 1. Load 5+ tracks in random order. Start playing track 3.<br>2. Click the **Title** column header (or press `Ctrl+1`).<br>3. Click **Artist** column header (`Ctrl+2`), **Album / Resolution** (`Ctrl+3`), **Length** (`Ctrl+4`), and **Rating** (`Ctrl+5`). | Library is sorted in-place using hand-written insertion sort (stable sort). ListView refreshes in alphabetical / duration / rating order. `CurrentIndex` updates via `SetPlaylist(copy)` so that the currently playing track remains correctly highlighted and continues playing uninterrupted. | Automated harness: `InsertionSort` verified correct ascending order by Title, Artist and Duration, descending by Rating, and **stable** (two equal-title items keep their original order). `SetPlaylist`'s "find the same object by reference" retention logic was traced and is correct; not driven through the real UI. | Automated – Pass |
-| **TC19** | FR8 – Toggle Favorite & UI Updates | 1. Select a track in `listView1`.<br>2. Click the **♥ Fav** button (or press `Ctrl+D` or menu `Library > Toggle Favorite`).<br>3. Observe the `♥ ★` column in `listView1` and the Now Playing banner.<br>4. Click **♥ Unfav** again. | First click marks track as favorite (`IsFavorite = true`); button text changes to `♥ Unfav`; `"♥"` appears in the `♥ ★` column and `"• ♥ Favorite"` appears in Now Playing. Second click toggles `IsFavorite = false`; button reverts to `♥ Fav`; heart symbol disappears. Changes are saved immediately. | Automated harness confirmed `FavoritesStore` persists `IsFavorite` across a save/apply round trip. `ToggleFavorite()` and `FavoriteText()` traced in source and match expected result. Button click not driven interactively. | Partially automated – Pass |
-| **TC20** | FR8 – Set Star Rating & Persistence in `Favorites.txt` | 1. Select a track. In `cboRating`, select `"★★★★ (4)"`.<br>2. Verify the `♥ ★` column displays `"4★"`.<br>3. Close Tapedeck. Check `Favorites.txt` for line `FilePath\|0\|4`.<br>4. Relaunch Tapedeck. | Selecting 4 stars sets `item.Rating = 4`. `listView1` displays `4★` in `♥ ★` column. Rating is saved to `Favorites.txt`. On startup, `FavoritesStore.Apply` restores the 4-star rating and dropdown reflects 4 stars when the row is selected. | Automated harness: ratings of 5 and 3 on two items round-tripped exactly through `FavoritesStore.Save` → `FavoritesStore.Apply` on freshly reloaded `MediaItem` objects; an untouched third item stayed at rating 0. Damaged `Favorites.txt` lines (wrong field count, non-numeric rating) are skipped and counted; a line for a path no longer in the library is silently ignored, as designed. | Automated – Pass |
-| **TC21** | FR9 – Splash Screen Display & Auto/Manual Dismiss | 1. Launch `Tapedeck.exe`. Observe splash screen layout.<br>2. Note presence of logo, AppTitle, Group/Section, and team cards (Joey, Heaven, Ammaar, Maddox, Genevieve).<br>3. Let it run without user input (timing test).<br>4. On next launch, press any key or click mouse immediately after splash appears. | Splash window renders centered with raised 3D border, showing all 5 member cards with photos/names/roles. Closes automatically after ~3000 ms. On second test, pressing a key or clicking anywhere closes splash immediately and opens `TapedeckForm`. | Smoke-tested: `Tapedeck.exe` launched repeatedly and screen-captured. Splash renders the logo, title, group/section and all 5 member photo cards correctly; auto-closes after ~3 s (window-title polling confirmed it is gone by ~3.2–3.8 s every run). This run is also where bug **TD-01** (brief blank window right after the splash closed) was found and then fixed — see Section 6.3. Manual click/key-to-skip was not driven interactively. | Smoke-tested – Pass |
-| **TC22** | FR4, FR12, FR13 – **[Negative]** Single-Item Playlist Behavior | 1. Clear library and add exactly ONE media file.<br>2. Start playback of this single item.<br>3. Click **Next** (`btnNext`) and **Previous** (`btnPrevious`).<br>4. Turn Shuffle ON (`btnShuffle`) and click **Next**.<br>5. Click column header to Sort the library (`Ctrl+1`). | `Next` and `Previous` wrap safely to index 0 (`(0+1)%1 = 0`) and replay the track without crash. In Shuffle mode, `PickRandomIndex()` detects `Playlist.Count == 1` and returns 0 without infinite loop. `SortLibrary()` detects `Playlist.Count < 2` and returns early without altering list or throwing errors. | Automated harness: `InsertionSort` on a 1-item list returns without changing it or throwing. `PickRandomIndex`'s `Playlist.Count == 1` short-circuit and the `Next`/`Previous` modulo wrap were traced and are correct. Not driven through the real UI. | Partially automated – Pass |
-| **TC23** | FR13 – **[Negative]** Playback Completion with Repeat Off | 1. Load 2 or more tracks. Select the LAST track in the playlist.<br>2. Ensure Shuffle is OFF and Repeat is set to `RepeatMode.Off` (`lblRepeat` shows "Off").<br>3. Play the track and seek near the very end (e.g. within 2 seconds of completion). Let it finish. | When track reaches EOF, `Player_EndReached` triggers `PlayNextOrStop()`. Because `Repeat == RepeatMode.Off` and `CurrentIndex == Playlist.Count - 1`, the player calls `Stop()`. Playback unloads, `_loadedPath` is set to null, status shows `"Stopped"`, and playback does NOT auto-restart or wrap to track 1. | `PlayNextOrStop()` traced: `Repeat == Off && !ShuffleEnabled && CurrentIndex == Playlist.Count - 1` falls through to `Stop()`, matching expected result. Needs a real track to play to completion to verify audibly. | Reviewed only |
-| **TC24** | FR13 – Continuous Playback: Repeat All, Repeat One, and Shuffle | 1. Set Repeat to `RepeatMode.One` (`Ctrl+R` until `lblRepeat` shows "One"). Play track and seek to end.<br>2. Verify same track restarts automatically from beginning.<br>3. Cycle Repeat to `RepeatMode.All`. Play last track in list and seek to end.<br>4. Verify playback wraps and starts playing track 1 automatically.<br>5. Turn Shuffle ON (`btnShuffle` / `Ctrl+H`). Play track and seek to end. | In Repeat One, `PlayNextOrStop()` invokes `Play()` on current item. In Repeat All, `PlayNextOrStop()` invokes `Next()`, which wraps from last to first item. In Shuffle ON, a random distinct track (`PickRandomIndex()`) is chosen and played automatically upon track completion. | `PlayNextOrStop()` and `CycleRepeat()` traced and match expected result for all three modes. Needs real tracks played to completion to verify interactively. | Reviewed only |
-| **TC25** | FR1 – **[Negative]** Add File Open / Locked in Another Program | 1. Open a valid `.mp3` or `.mp4` file in another program that acquires an exclusive file lock (or opens it for writing).<br>2. In Tapedeck, click **Add** (`Ctrl+O`) and select the locked file.<br>3. Observe status and dialog reporting. | Application handles the `IOException` / file-lock sharing violation gracefully in `AddFilesAsync`. File read fails without crashing; `ShowError` reports: `"Added 0 item(s). 1 could not be read."`. Playlist remains unaffected. | `AddFilesAsync` catches `VLCException` and `IOException` around `ReadMediaItemAsync` and counts the file as `failed`; traced and matches expected result. Not run with an actual locked file. | Reviewed only |
-| **TC26** | FR4, FR7 – **[Negative]** Play File After Parent Folder Renamed While App Closed | 1. Add a media file located in a dedicated folder (e.g. `C:\Music\Album1\track.mp3`), then close Tapedeck.<br>2. While the app is closed, rename the folder in File Explorer (e.g. to `Album1_Renamed`).<br>3. Launch Tapedeck, observe the item in `listView1`, and attempt playback (press **Play** or double-click the item). | On launch, missing path is detected (`!File.Exists`); row is shown greyed out (`Theme.MutedColor`) and counted in status. Attempting playback stops player, sets status `"File not found: {path}"`, and displays `ShowError`: `"This file was moved or deleted:\n\n{path}"` without crashing. | Same code path as TC15 (`CountMissingFiles`, `Play()`'s `File.Exists` check); traced and matches expected result. Not run interactively. | Reviewed only |
-| **TC27** | FR8, FR12 – Favorite, Rating, and Sort by Rating | 1. In a multi-item library, select an item, click **♥ Fav** (`Ctrl+D`), and select 5 stars (`★★★★★`) in `cboRating`.<br>2. Select a second item and select 3 stars (`★★★`).<br>3. Select `Library > Sort by Rating` (or press `Ctrl+5`, or click the **♥ ★** column header).<br>4. Inspect the resulting order in `listView1` and the Now Playing area. | Hand-written insertion sort orders items descending by rating (5 stars first, followed by 3 stars, down to unrated). The 5-star favorite displays `"♥ 5★"` at the top. If an item was playing, `SetPlaylist` preserves the playing item's current index and playback continues uninterrupted. | Automated harness: a 3-item list with ratings 3/5/0 sorted by `SortKey.Rating` came back exactly `5, 3, 0`. `FavoriteText()` formatting ("♥ 5★") traced directly against its source and is correct. Not driven through the real UI. | Automated (sort) – Pass |
-| **TC28** | FR13 – Shuffle Mode with Repeat All Complete Cycle | 1. Load a playlist of 4 distinct tracks.<br>2. Turn Shuffle ON (`btnShuffle` / `Ctrl+H`).<br>3. Set Repeat mode to **Repeat All** (`btnRepeat` / `Ctrl+R` until `lblRepeat` displays "All").<br>4. Play track and seek near the end (or allow each track to finish).<br>5. Observe successive track transitions through 4 full track completions. | At each track completion, `Player_EndReached` triggers `PlayNextOrStop()`, calling `Next()` with `ShuffleEnabled = true`. With Repeat All active, playback loops continuously without stopping at the end of the playlist. Verify all tracks in the playlist play before any track repeats, and consecutive repeat of the same track is prevented by `PickRandomIndex()`. | `PickRandomIndex()`'s `while (index == CurrentIndex)` loop traced: it only prevents immediately repeating the current track, not a full non-repeating shuffle cycle through all 4 — the same track can play twice before all 4 have played. This matches the method's own doc comment ("not the current one") and is expected behavior, not a bug, but needs a real 4-track run to confirm perceived shuffle quality. | Reviewed only |
+| TC01 | Add media files | Ctrl+O, select one .mp3 and one .mp4 | Both items added; status "Added 2 item(s)." | Both files added; status showed "Added 2 item(s)." | Pass |
+| TC02 | Add folder | Ctrl+Shift+O, choose a folder with media in subfolders | All .mp3 and .mp4 files in the folder and subfolders are added | Files from the folder and its subfolder were added; no errors. | Pass |
+| TC03 | Duplicate file | Add the same file twice | Not added again; "1 already in the library." | Status showed "Added 0 item(s). 1 already in the library." | Pass |
+| TC04 | Unsupported format **[N]** | Add .wav, .txt, .jpg files | Files skipped with a warning; no crash | Warning "Added 0 item(s). 1 skipped: only .mp3 and .mp4 are supported." Playlist unchanged. | Pass |
+| TC05 | Item information | Add a tagged .mp3 and an .mp4; check the columns | Audio shows album; video shows resolution; missing tags show "Unknown" | Tags shown for the mp3; resolution (1280x720) shown for the mp4. | Pass |
+| TC06 | Save and reload | Add items, close, reopen | `Library.txt` in 6-field format; same items reload | `Library.txt` correct; status "Loaded 6 item(s) from Library.txt." | Pass |
+| TC07 | Edit in Notepad and reload | Ctrl+L, edit a title, save; Ctrl+Shift+L | Edited title shown without restarting | Edited title appeared after reload. | Pass |
+| TC08 | Play, Pause, Stop | F5, F6, F5, F7 | Pause keeps the position; Stop resets elapsed time to 00:00:00 | All three worked; Stop returned to 00:00:00. | Pass |
+| TC09 | Next and Previous | Ctrl+Right past the last item; Ctrl+Left on the first item | Wraps from last to first and first to last | Both wrapped as expected. | Pass |
+| TC10 | Volume | Ctrl+Up and Ctrl+Down repeatedly | Changes in steps of 10; stops at 0 and 100 | Volume changed smoothly and stopped at 0 and 100. | Pass |
+| TC11 | Seek | Drag the seek bar; arrow keys on the bar | Playback jumps to the chosen position | Position changed immediately with mouse and keys (at 100% scaling). | Pass |
+| TC12 | Playlist and Now Playing | Double-click item 2 | Item plays; Now Playing filled in; row highlighted in teal; window title "Title - Artist - Tapedeck" | Item played; row highlighted in teal (`06_User_Manual.md` Figure 4); Now Playing showed title, artist, type and resolution. Window title not yet checked. | To be confirmed |
+| TC13 | Empty library **[N]** | No items; press F5, Next, Previous, Stop | "The library is empty. Add some files first."; no exception | Message shown; no crash. | Pass |
+| TC14 | Corrupt `Library.txt` **[N]** | Replace `Library.txt` with `Library_corrupt.txt`, start | Damaged lines skipped and counted; valid lines load | App opened; damaged lines skipped and reported; valid items loaded. | Pass |
+| TC15 | Missing file **[N]** | Add a file, rename it in Explorer, play it | Row greyed out; "This file was moved or deleted"; no crash | Row greyed out; status and warning shown (`06_User_Manual.md` Figure 6); no crash. | Pass |
+| TC16 | Search | Search an exact title, part of a title, part of an artist | Found by binary search or partial-match search; row selected | All three searches selected the correct row. | Pass |
+| TC17 | No match / blank search **[N]** | Search with an empty box, then a title not in the list | Status message; selection unchanged | "Type a title or artist…" and "No match for …" shown. | Pass |
+| TC18 | Sort while playing | Play item 3, then Ctrl+1 to Ctrl+5 | List re-sorted with insertion sort; playing item stays selected and playing | Each sort was correct; playback not interrupted. | Pass |
+| TC19 | Toggle favorite | Select an item, Ctrl+D twice | ♥ added then removed; button text changes | Both states displayed correctly. | Pass |
+| TC20 | Star rating saved | Give 4 stars, close and reopen | "4★" shown and restored from `Favorites.txt` | Rating shown, saved and restored. | Pass |
+| TC21 | Splash screen | Start and wait; start again and press a key | Logo, title, group, section and five member cards; closes after ~3 s or on a key | All shown (`06_User_Manual.md` Figure 1); closed after about 3 s and on a key press. | Pass |
+| TC22 | One-item list **[N]** | Library of 1: Next, Previous, Shuffle + Next, Sort | Same item replays; no hang; sort does nothing | All behaved as expected. | Pass |
+| TC23 | Repeat Off, last item **[N]** | Let the last item finish | Playback stops | Playback stopped; did not wrap to item 1. | Pass |
+| TC24 | Repeat One, Repeat All, Shuffle | Let an item finish in each mode | One replays; All wraps to item 1; Shuffle picks another item | All three modes worked. | Pass |
+| TC25 | Locked file **[N]** | Add a file locked by another program | "1 could not be read."; no crash | Message shown; playlist unchanged. | Pass |
+| TC26 | Folder renamed while closed **[N]** | Add a file, close, rename its folder, reopen, play | Row greyed out; moved/deleted warning; no crash | Behaved as expected. | Pass |
+| TC27 | Sort by rating | Give ratings 5 and 3, Ctrl+5 | 5★ first, then 3★, then unrated | Order correct (`06_User_Manual.md` Figure 4); playback continued. | Pass |
+| TC28 | Shuffle with Repeat All | Four items, shuffle on, Repeat All | Plays in random order and keeps going; no item twice in a row | Played in random order and kept looping. | Pass |
+
+### 6.1.4 Requirements Traceability
+
+**Table 3. Traceability of test cases to requirements**
+
+| Requirement | Test cases | Note |
+|---|---|---|
+| FR1, FR2 | TC01–TC05, TC25 | File dialog, folder, duplicates, formats and item information. |
+| FR3 | TC06, TC07, TC14 | Library persistence and recovery from damaged lines. |
+| FR4, FR10 | TC08–TC11, TC13 | Buttons, menu items and keyboard shortcuts. |
+| FR5 | TC12 | Playlist selection and Now Playing area. |
+| FR6, FR12 | TC16–TC18, TC27 | Hand-written insertion sort, binary search and partial-match search. |
+| FR7 | TC04, TC13, TC14, TC15, TC25, TC26 | Negative tests required by the guide. |
+| FR8 | TC19, TC20, TC27 | Favorites and 1–5 star ratings enhancement. |
+| FR9 | TC21 | Splash screen and its automatic and manual closing. |
+| FR11 | TC08, TC11 | Elapsed time display and seek bar. |
+| FR13 | TC22, TC23, TC24, TC28 | Shuffle on/off, each repeat mode, last item, one-item list. |
+
+---
+
+## 6.2 Test Results
+
+### 6.2.1 Results Summary
+
+**Table 4. Summary of test results**
+
+| Measure | Count | Remarks |
+|---|---|---|
+| **Test cases planned** | 28 | Including 9 negative test cases. |
+| **Executed** | 28 | All planned test cases were run. |
+| **Passed** | 27 | All other executed tests met the expected results. |
+| **Failed** | 0 | — |
+| **To be confirmed** | 1 | TC12: the window title in the taskbar still has to be checked. |
+
+One defect, B06, was found outside the test cases while capturing the user-manual screenshots: at 200% display scaling the elapsed time and the seek bar are covered. At 100% they display correctly, which is why TC08 and TC11 passed. B06 is recorded in the bug log (Section 6.3).
+
+### 6.2.2 Release Build Test on a Second Computer
+
+Per guide Appendix E.2, the Release build was tested by Joey Cuison on a computer without Visual Studio: a classmate's laptop (Windows 11 Pro, 64-bit). The details of the installation are in `07_Deployment_Guide.md` Section 8.5.
+
+**Table 5. Release build test checklist**
+
+| Check | Result | Date | Remarks |
+|---|---|---|---|
+| Application starts from the extracted ZIP in a writable folder | Pass | Nov 12, 2026 | Extracted from `G3_BSCS2A_Release.zip` and started without installing anything else. |
+| Splash screen and team photos display | Pass | Nov 12, 2026 | Logo, title, group, section and all five member cards shown; closed after about 3 seconds. |
+| Add files; play, pause, stop; elapsed time | Pass | Nov 12, 2026 | Files added; playback controls worked; elapsed time counted up and reset on Stop. |
+| Keyboard shortcuts | Pass | Nov 12, 2026 | F5, F6, F7, Ctrl+Right, Ctrl+Left and the menu shortcuts worked like the buttons. |
+| Sorting, shuffle and repeat | Pass | Nov 12, 2026 | Insertion sort, search, shuffle and repeat modes (Off / All / One) worked. |
+| Close and reopen: library reloads | Pass | Nov 12, 2026 | `Library.txt` was created next to `Tapedeck.exe` and the items reloaded. |
+| One error case (renamed media file) | Pass | Nov 12, 2026 | The renamed file was greyed out and playing it showed the moved/deleted message without crashing. |
 
 ---
 
 ## 6.3 Bug Log
 
-| Bug ID | Test Case | Severity | Description | Assigned Owner | Status | Fix Commit |
+Each defect found during development and testing is recorded with how it was fixed and the retest result (guide Appendix B.2). Only defects that actually occurred are entered.
+
+**Table 6. Bug log**
+
+| Bug ID | Test | Description | Found by / date | Fix | Retest result | Status |
 |---|---|---|---|---|---|---|
-| *(Sample)* | TC14 | High | When Library.txt contains an empty line, app throws IndexOutOfRangeException. | Heaven | Resolved | `fix: skip blank lines in LibraryStore.Load` |
-| **TD-01** | TC21 | Low | On a cold start (first launch after reboot, or the very first launch of a freshly extracted Release build), there is a brief blank/unresponsive window for roughly 1.5–2 seconds right after the splash screen closes and before the main `TapedeckForm` appears. Root cause: `BasePlayerForm`'s constructor called `Core.Initialize()` and `new LibVLC()` synchronously on the UI thread, and that call only happened *after* `SplashForm.ShowDialog()` returned in `Program.cs` — so the native VLC engine's one-time disk load (loading `libvlc.dll` and scanning the `libvlc\win-x64\plugins\` folder) blocked `Application.Run` from showing the main window. Measured with window-title polling: ~1.5–2 s on the very first launch, ~300 ms on a warm re-launch (OS file cache already has the DLLs). Not a crash and recovers on its own, but it is exactly the scenario every teammate and grader hits when first running `G3_BSCS2A_Release.zip` (see `07_Deployment_Guide.md` D2). | Joey | **Resolved** | `fix: start the LibVLC engine while the splash is showing, not after it closes` |
-| | | | *(No further defects found this session — see 6.1 "M4 execution pass" for what was and was not exercised. TC01–TC02, TC04–TC05, TC07–TC12, TC15, TC18–TC19, TC22–TC26, TC28 still need one interactive click-through with real `.mp3`/`.mp4` files before final sign-off; none of that review turned up a suspected defect.)* | | | |
-
----
-
-## 6.4 Verification Summary Matrix
-
-| Requirement | Description | Type | Covered By |
-|---|---|---|---|
-| **FR1** | Add mp3 and mp4 files through a file dialog (and a whole folder) | Must | TC01, TC02, TC03, TC04, TC25 |
-| **FR2** | Show title, artist, duration, file path, media type, album (audio) or resolution (video) | Must | TC05 |
-| **FR3** | Save the library to `Library.txt` and reload it when the program starts | Must | TC06, TC07, TC14 |
-| **FR4** | Play, Pause, Stop, Next, Previous, volume and seek | Must | TC08, TC09, TC10, TC11, TC13, TC15, TC22, TC26 |
-| **FR5** | Playlist list and Now Playing area | Must | TC12 |
-| **FR6** | Search or sort by title or artist (sorting algorithm + binary search) | Should | TC16, TC17 |
-| **FR7** | Handle missing files, corrupt lines, unsupported formats, empty library | Must | TC04, TC13, TC14, TC15, TC22, TC23, TC25, TC26 |
-| **FR8** | Enhancement: Favorites and 1–5 star ratings, saved in `Favorites.txt` | Should | TC19, TC20, TC27 |
-| **FR9** | Splash screen: logo, title, group, section, every member's photo, name and role; closes after ~3 s or on click/key | Must | TC21 |
-| **FR10** | MenuStrip (File, Playback, Library, Help) with keyboard shortcuts calling the same methods as the buttons | Must | TC07, TC10, TC21 (plus menu invocations in TC01, TC06, TC08, TC18, TC19) |
-| **FR11** | Elapsed time next to total length (00:01:12 / 00:03:25), updated ≥ once per second | Must | TC08, TC11, TC22 |
-| **FR12** | Hand-written insertion sort by title and artist (no List.Sort/OrderBy); keeps the current item | Must | TC18, TC22, TC27 |
-| **FR13** | Shuffle on/off and Repeat Off/All/One; the next item starts automatically | Must | TC22, TC23, TC24, TC28 |
-
-### Negative Test Cases Verification
-- **Missing file:** TC15 (moved/deleted file displays greyed out, reports error dialog on play).
-- **Corrupt line in `Library.txt`:** TC14 (skips invalid lines from `Library_corrupt.txt` and reports skipped count).
-- **Empty library:** TC13 (safe no-op/error messaging for Play, Next, Previous, Remove, Search with 0 items).
-- **Unsupported format:** TC04 (rejects `.wav`, `.txt`, `.jpg` with warning).
-- **One-item list:** TC22 (validates Next/Previous wrap, Shuffle infinite loop avoidance, and Sort early exit).
-- **Last item with Repeat Off:** TC23 (stops playback at EOF on the last item when Repeat is Off).
-- **File locked / open in another program:** TC25 (catches IOException during read, alerts user without crash).
-- **Folder renamed while closed:** TC26 (greys out missing item on startup, displays error and halts playback without crash).
+| B01 | TC07, TC10 | At 125% scaling the menu strip did not respond to clicks; the taller title bar covered it. | Joey Cuison, M3 | `PlaceMenu()` places the menu under the scaled title bar and brings it to the front. | Pass at 100% and 125% | Closed |
+| B02 | TC05 | Playlist column headings were cut off because column widths did not scale. | Joey Cuison, M3 | `FitColumns()` divides the list width between the columns. | Pass | Closed |
+| B03 | TC21 | Title bar and splash showed "Group 2" instead of OOP Group 3, BSCS 2-A. | Joey Cuison, M3 | Group name corrected in `TeamInfo`, the project file and the skin. | Pass | Closed |
+| B04 | TC13 | At 200% scaling the status bar text slipped below its box and was cut off. | Joey Cuison, M3 | Status labels placed from the skin's coordinates after scaling. | Pass at 200% | Closed |
+| B05 | TC01 | At 200% scaling the Add button was hidden by an overlapping control. | Joey Cuison, M3 | Library buttons brought to the front. | Pass at 200% | Closed |
+| TD-01 | TC21 | On a cold start a blank window showed for 1.5–2 s after the splash, because the playback engine loaded only after the splash closed. | Joey Cuison, Nov 12, 2026 | The engine now loads on a background thread while the splash is showing (`PrepareEngineAsync`). | Pass (Debug and Release) | Closed |
+| B06 | TC08, TC11 | At 200% scaling the elapsed time and the seek bar are not visible. The media information line is scaled twice (360×20 becomes 1242×75) and, being transparent, paints over both controls. | Joey Cuison, Nov 12, 2026 | The Now Playing labels, elapsed time and seek bar are sized from the skin's coordinates after scaling, and the elapsed time and seek bar are brought to the front (`PlaceSkinControls()`). | *Retest at 200% pending* | Open |
