@@ -37,7 +37,14 @@ public partial class TapedeckForm : BasePlayerForm
     private bool _updatingRating;
 
     /// <summary>Builds the form, menu and skin, and connects the video panel.</summary>
-    public TapedeckForm()
+    public TapedeckForm() : this(null) { }
+
+    /// <summary>
+    /// Builds the form using an already-starting LibVLC engine (see
+    /// <see cref="BasePlayerForm.PrepareEngineAsync"/>), so Program.cs can overlap engine start-up
+    /// with the splash screen instead of pausing on a blank window after it closes.
+    /// </summary>
+    public TapedeckForm(Task<LibVLCSharp.Shared.LibVLC> enginePrep) : base(enginePrep)
     {
         InitializeComponent();
         if (IsDesignTime) return;

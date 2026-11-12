@@ -21,3 +21,4 @@ Library.txt
 Favorites.txt
 # Personal media used while testing (never commit copyrighted media)
 SampleMedia/
+*.zip
