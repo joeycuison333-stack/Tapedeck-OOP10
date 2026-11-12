@@ -5,7 +5,7 @@
 | **Product** | Tapedeck – Winamp-style desktop media player |
 | **Course** | OOP10 – Object-Oriented Programming with C# and Windows Forms |
 | **Instructor** | Prof. Ulysses Raymond F. Monsale |
-| **Group / Section** | OOP Group 2 · BSCS 2-A |
+| **Group / Section** | OOP Group 3 · BSCS 2-A |
 | **Team** | **Joey Cuison** (leader) · **Heaven** · **Ammaar Azmy** · **Christian Maddox Rivera (Maddox)** · **Valencia Genevieve (Genevieve)** |
 | **Repository** | github.com/joeycuison333-stack/Tapedeck-OOP10 (private) |
 | **Final due date** | Saturday, November 14, 2026 |
@@ -47,6 +47,7 @@ Tapedeck lists and plays **mp3** and **mp4** files. It reads each file's informa
 | NFR4 | UI, data classes and file I/O in separate classes; all skin settings in `Theme.cs`. |
 | NFR5 | Coding standards: PascalCase/camelCase, control prefixes, XML `///` comments, constants instead of magic values. |
 | NFR6 | Works at 100% and 125% Windows display scaling. |
+| NFR7 | Long-running work (reading file metadata, scanning a folder, starting the playback engine) does not freeze the UI thread. |
 
 ---
 

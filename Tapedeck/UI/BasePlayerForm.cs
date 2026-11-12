@@ -37,14 +37,25 @@ public class BasePlayerForm : Form, IMediaControls
     public RepeatMode Repeat { get; set; } = RepeatMode.Off;
 
     /// <summary>Creates the playback engine. Returns early in design mode so the designer opens.</summary>
-    public BasePlayerForm()
+    public BasePlayerForm() : this(null) { }
+
+    /// <summary>
+    /// Creates the form, reusing an already-starting LibVLC engine when one was prepared ahead
+    /// of time (see <see cref="PrepareEngineAsync"/>). On a cold start, loading the native VLC
+    /// engine from disk takes about 1-2 seconds; starting that on a background thread while the
+    /// splash screen is already showing (Program.cs) means this constructor usually just picks up
+    /// an already-finished Task instead of blocking the UI thread right when the main window is
+    /// about to appear. <paramref name="enginePrep"/> is null in design mode and when the form is
+    /// created directly (for example by the Visual Studio designer), in which case the engine is
+    /// created the old way, in place.
+    /// </summary>
+    protected BasePlayerForm(Task<LibVLC> enginePrep)
     {
         if (IsDesignTime) return;
 
         try
         {
-            Core.Initialize();
-            _libVLC = new LibVLC();
+            _libVLC = enginePrep != null ? enginePrep.GetAwaiter().GetResult() : CreateEngine();
             _player = new MediaPlayer(_libVLC);
             _player.EndReached += Player_EndReached;
             _player.EncounteredError += Player_EncounteredError;
@@ -63,11 +74,49 @@ public class BasePlayerForm : Form, IMediaControls
         }
     }
 
+    /// <summary>Loads the native VLC engine and returns it. The slow, disk-bound step.</summary>
+    private static LibVLC CreateEngine()
+    {
+        Core.Initialize();
+        return new LibVLC();
+    }
+
+    /// <summary>
+    /// Starts loading the native VLC engine on a background thread, so the time it takes
+    /// (about 1-2 seconds on a cold start) overlaps with whatever the caller shows meanwhile,
+    /// for example the splash screen's 3-second display, instead of adding to it. Pass the
+    /// returned task to a form's constructor (see <see cref="BasePlayerForm(Task{LibVLC})"/>
+    /// and <see cref="TapedeckForm(Task{LibVLC})"/>). Exceptions are captured on the task and
+    /// re-thrown on the UI thread when the constructor awaits it, so they are still reported
+    /// through the normal ShowError path.
+    /// </summary>
+    public static Task<LibVLC> PrepareEngineAsync()
+    {
+        return Task.Run(CreateEngine);
+    }
+
     /// <summary>True when the form is being shown in the Visual Studio designer.</summary>
     protected static bool IsDesignTime
     {
-        get { return LicenseManager.UsageMode == LicenseUsageMode.Designtime; }
+        get { return _isDesignTime.Value; }
     }
+
+    // LicenseManager only works in the old in-process designer. The .NET 8 designer runs the form
+    // in a separate process (DesignToolsServer) and loads this project's DLL from a cache folder
+    // such as %LocalAppData%\Microsoft\VisualStudio\<version>\WinFormsDesigner\<random>\.
+    // There UsageMode reports Runtime, so the engine tried to start and showed a LibVLC error.
+    // Checking where our own DLL was loaded from works in every Visual Studio version.
+    private static readonly Lazy<bool> _isDesignTime = new Lazy<bool>(() =>
+    {
+        if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) return true;
+
+        string dll = typeof(BasePlayerForm).Assembly.Location ?? string.Empty;
+        if (dll.Contains("WinFormsDesigner", StringComparison.OrdinalIgnoreCase)) return true;
+
+        string process = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
+        return process.Contains("DesignTools", StringComparison.OrdinalIgnoreCase)
+            || process.Equals("devenv", StringComparison.OrdinalIgnoreCase);
+    });
 
     /// <summary>True when an item is loaded and not paused.</summary>
     protected bool IsPlaying

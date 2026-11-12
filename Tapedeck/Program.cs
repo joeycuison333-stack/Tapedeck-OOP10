@@ -15,11 +15,16 @@ internal static class Program
 
         ApplicationConfiguration.Initialize();
 
+        // Starts loading the native VLC engine (about 1-2 seconds on a cold start) on a background
+        // thread right away, so that time overlaps with the splash screen's ~3 second display
+        // instead of pausing on a blank window right after the splash closes.
+        Task<LibVLCSharp.Shared.LibVLC> enginePrep = BasePlayerForm.PrepareEngineAsync();
+
         using (SplashForm splash = new SplashForm())
         {
             splash.ShowDialog(); // returns when the splash closes itself
         }
 
-        Application.Run(new TapedeckForm());
+        Application.Run(new TapedeckForm(enginePrep));
     }
 }
