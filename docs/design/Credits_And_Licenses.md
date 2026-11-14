@@ -26,7 +26,7 @@
 | Skin and splash backgrounds | `Assets/tapedeck_skin.png`, `Assets/splash_bg.png` | Designed for this project (retro cassette design) | Original work of the group |
 | Logo and app icon | `Assets/logo.png`, `Assets/logo.ico` | Created for this project | Original work of the group |
 | Member photos | `Assets/Team/*.jpg` | Provided by each member | Used with the member's consent |
-| Button images | `Assets/btn_*.png` | TODO: confirm the source with Joey | TODO |
+| Button images | `Assets/btn_*.png` | Icons made in Canva for this project | Canva Content License Agreement |
 | Fonts | Segoe UI, Tahoma, Consolas, Arial Black | Microsoft (included with Windows) | Windows system fonts, not redistributed |
 
 Canva designs follow the Canva Content License Agreement. Any Canva element used is covered by that license for this project.
@@ -46,5 +46,4 @@ LibVLCSharp and libVLC are used unmodified as separate libraries (DLLs shipped n
 
 ## Notes
 
-- Items marked TODO must be completed before submission.
 - Everything not listed above was written by the members of OOP Group 3.
