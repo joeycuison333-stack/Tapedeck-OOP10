@@ -49,10 +49,10 @@ The test cases below follow the Appendix B.1 format. The Actual result and Pass 
 | TC09 | Next and Previous | Ctrl+Right past the last item; Ctrl+Left on the first item | Wraps from last to first and first to last | Both wrapped as expected. | Pass |
 | TC10 | Volume | Ctrl+Up and Ctrl+Down repeatedly | Changes in steps of 10; stops at 0 and 100 | Volume changed smoothly and stopped at 0 and 100. | Pass |
 | TC11 | Seek | Drag the seek bar; arrow keys on the bar | Playback jumps to the chosen position | Position changed immediately with mouse and keys (at 100% scaling; retested at 200% after the B06 fix). | Pass |
-| TC12 | Playlist and Now Playing | Double-click item 2 | Item plays; Now Playing filled in; row highlighted in teal; window title "Title - Artist - Tapedeck" | Item played; row highlighted in teal (`06_User_Manual.md` Figure 4); Now Playing showed title, artist, type and resolution; the window title in the taskbar showed "Title - Artist - Tapedeck". | Pass |
+| TC12 | Playlist and Now Playing | Double-click item 2 | Item plays; Now Playing filled in; row highlighted in teal; window title "Title - Artist - Tapedeck" | Item played; row highlighted in teal (`06_User_Manual.md` Figure 5); Now Playing showed title, artist, type and resolution; the window title in the taskbar showed "Title - Artist - Tapedeck". | Pass |
 | TC13 | Empty library **[N]** | No items; press F5, Next, Previous, Stop | "The library is empty. Add some files first."; no exception | Message shown; no crash. | Pass |
 | TC14 | Corrupt `Library.txt` **[N]** | Replace `Library.txt` with `Library_corrupt.txt`, start | Damaged lines skipped and counted; valid lines load | App opened; damaged lines skipped and reported; valid items loaded. | Pass |
-| TC15 | Missing file **[N]** | Add a file, rename it in Explorer, play it | Row greyed out; "This file was moved or deleted"; no crash | Row greyed out; status and warning shown (`06_User_Manual.md` Figure 6); no crash. | Pass |
+| TC15 | Missing file **[N]** | Add a file, rename it in Explorer, play it | Row greyed out; "This file was moved or deleted"; no crash | Row greyed out; status and warning shown (`06_User_Manual.md` Figure 7); no crash. | Pass |
 | TC16 | Search | Search an exact title, part of a title, part of an artist | Found by binary search or partial-match search; row selected | All three searches selected the correct row. | Pass |
 | TC17 | No match / blank search **[N]** | Search with an empty box, then a title not in the list | Status message; selection unchanged | "Type a title or artist…" and "No match for …" shown. | Pass |
 | TC18 | Sort while playing | Play item 3, then Ctrl+1 to Ctrl+5 | List re-sorted with insertion sort; playing item stays selected and playing | Each sort was correct; playback not interrupted. | Pass |
@@ -64,7 +64,7 @@ The test cases below follow the Appendix B.1 format. The Actual result and Pass 
 | TC24 | Repeat One, Repeat All, Shuffle | Let an item finish in each mode | One replays; All wraps to item 1; Shuffle picks another item | All three modes worked. | Pass |
 | TC25 | Locked file **[N]** | Add a file locked by another program | "1 could not be read."; no crash | Message shown; playlist unchanged. | Pass |
 | TC26 | Folder renamed while closed **[N]** | Add a file, close, rename its folder, reopen, play | Row greyed out; moved/deleted warning; no crash | Behaved as expected. | Pass |
-| TC27 | Sort by rating | Give ratings 5 and 3, Ctrl+5 | 5★ first, then 3★, then unrated | Order correct (`06_User_Manual.md` Figure 4); playback continued. | Pass |
+| TC27 | Sort by rating | Give ratings 5 and 3, Ctrl+5 | 5★ first, then 3★, then unrated | Order correct (`06_User_Manual.md` Figure 5); playback continued. | Pass |
 | TC28 | Shuffle with Repeat All | Four items, shuffle on, Repeat All | Plays in random order and keeps going; no item twice in a row | Played in random order and kept looping. | Pass |
 
 ### 6.1.4 Requirements Traceability

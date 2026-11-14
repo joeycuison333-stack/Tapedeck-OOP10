@@ -29,6 +29,15 @@
 | Button images | `Assets/btn_*.png` | Icons made in Canva for this project | Canva Content License Agreement |
 | Fonts | Segoe UI, Tahoma, Consolas, Arial Black | Microsoft (included with Windows) | Windows system fonts, not redistributed |
 
+## Sample media (demo and screenshots)
+
+| Media | Files | Source | License |
+|---|---|---|---|
+| Sample videos | Horse, Running, Ocean View, Nature Trip and the other demo `.mp4` clips | Pixabay (pixabay.com/videos) | Pixabay Content License – free to use, no attribution required |
+| Sample music | `mixkit-hip-hop-02-738.mp3` and the other demo `.mp3` tracks | Mixkit (mixkit.co) | Mixkit License – free to use |
+
+The sample media is not committed to the repository or included in the release ZIP; it is only used for the demonstration and the screenshots.
+
 Canva designs follow the Canva Content License Agreement. Any Canva element used is covered by that license for this project.
 
 ## Tools and libraries
