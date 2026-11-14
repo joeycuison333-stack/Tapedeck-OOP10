@@ -63,13 +63,17 @@ To remove an item, select it and click **Remove** or press **Delete**. To edit t
 
 ## 7.5 Playing Media
 
-Double-click an item in the playlist, or select it and press Enter or **Play** (F5). The Now Playing area shows the item's title, artist and details, and the elapsed time counts up next to the total length (for example `00:00:41 / 00:03:02`). For video files, the picture plays in the video panel (Figure 2).
+Double-click an item in the playlist, or select it and press Enter or **Play** (F5). The Now Playing area shows the item's title, artist and details, and the elapsed time counts up next to the total length (for example `00:00:41 / 00:03:02`). For video files, the picture plays in the video panel (Figure 2). For audio files the video panel stays black, and Now Playing shows "Audio" and the album (Figure 3).
 
 Use the buttons or keyboard shortcuts to Pause (F6), Stop (F7), go to the Next item (Ctrl+Right) or the Previous item (Ctrl+Left). Adjust the volume with the slider or Ctrl+Up / Ctrl+Down, and drag the seek bar to jump to another position. When an item finishes, the next one starts automatically according to the shuffle and repeat settings.
 
+![An mp3 playing](screenshots/now_playing_audio.png)
+
+**Figure 3. An mp3 playing: Now Playing shows the audio details and the elapsed time**
+
 ![Playback menu](screenshots/playback_menu.png)
 
-**Figure 3. The Playback menu with its shortcuts**
+**Figure 4. The Playback menu with its shortcuts**
 
 ## 7.6 Sorting and Searching the Library
 
@@ -78,7 +82,7 @@ Use the buttons or keyboard shortcuts to Pause (F6), Stop (F7), go to the Next i
 
 ![Library sorted by rating](screenshots/library_favorites.png)
 
-**Figure 4. Library sorted by rating, with favorites and star ratings**
+**Figure 5. Library sorted by rating, with favorites and star ratings**
 
 ## 7.7 Shuffle and Repeat
 
@@ -92,7 +96,7 @@ Use the buttons or keyboard shortcuts to Pause (F6), Stop (F7), go to the Next i
 
 - **Marking a favorite:** select an item and click **♥ Fav** or press **Ctrl+D**. A ♥ appears in the ♥ ★ column and in Now Playing, and the button changes to **♥ Unfav**. Click it again to remove the favorite.
 - **Rating an item:** select an item and choose 1 to 5 stars in the **Rating** list, or "Not rated" to clear it. The rating shows in the ♥ ★ column (for example "♥ 5★").
-- Favorites and ratings are saved in `Favorites.txt` and restored the next time Tapedeck starts. Sort by rating with Ctrl+5 to see the highest-rated items first (Figure 4).
+- Favorites and ratings are saved in `Favorites.txt` and restored the next time Tapedeck starts. Sort by rating with Ctrl+5 to see the highest-rated items first (Figure 5).
 
 ## 7.9 Keyboard Shortcuts
 
@@ -119,7 +123,7 @@ The shortcuts below match the final build. They are also shown inside the progra
 
 ![Keyboard shortcuts window](screenshots/keyboard_shortcuts.png)
 
-**Figure 5. Help > Keyboard Shortcuts**
+**Figure 6. Help > Keyboard Shortcuts**
 
 ## 7.10 Troubleshooting
 
@@ -138,4 +142,4 @@ The shortcuts below match the final build. They are also shown inside the progra
 
 ![File moved or deleted message](screenshots/error_missing_file.png)
 
-**Figure 6. Message for a file that was moved or deleted**
+**Figure 7. Message for a file that was moved or deleted**
