@@ -10,7 +10,7 @@
 | **Repository** | github.com/joeycuison333-stack/Tapedeck-OOP10 (private) |
 | **Final due date** | Saturday, November 14, 2026 |
 | **Canva skin source** | https://canva.link/u1lv3kiz80z63am – page 1 is the skin. Export page 1 only, as PNG, **980 × 620 px**, to `Tapedeck/Assets/tapedeck_skin.png`. |
-| **IDE (everyone)** | **Visual Studio 2026** + .NET desktop development workload + .NET 8.0 Runtime component. Keep `.sln` (do not convert to `.slnx`) and keep `net8.0-windows`. Antigravity is used only to run the prompts. |
+| **IDE (everyone)** | **Visual Studio 2026** + .NET desktop development workload + .NET 8.0 Runtime component. Keep `.sln` (do not convert to `.slnx`) and keep `net8.0-windows`. |
 
 ---
 
@@ -114,7 +114,7 @@ Everyone needs **at least 10 meaningful commits** from their **own GitHub accoun
    `git clone https://github.com/joeycuison333-stack/Tapedeck-OOP10.git`
 2. Download `Tapedeck-reference.zip` and extract it to Documents (PowerShell: `Expand-Archive "$env:USERPROFILE\Downloads\Tapedeck-reference.zip" "$env:USERPROFILE\Documents" -Force`). This gives `Documents\Tapedeck-reference`, the finished reference. **Never commit from it**.
 3. Wait for Joey's message: **"foundation is in main"** (Mon Nov 9, noon). Then, for each task: `git checkout main` → `git pull` → `git checkout -b <your-branch>`.
-4. Build your file with the **Antigravity prompt** (section 7). It **replaces the placeholder** with the same file name. Compare with the same file in `Tapedeck-reference` and make sure you can explain every line.
+4. Write your file so it **replaces the placeholder** with the same file name. Compare with the same file in `Tapedeck-reference` and make sure you can explain every line.
 5. Build in Visual Studio (**Ctrl+Shift+B**) – it must succeed – then commit with the exact message given, and push.
 6. Open a **pull request** to `main`. Joey reviews and merges.
 7. Only touch **your own files** (section 4). Commit prefixes: `feat:` `fix:` `docs:` `test:` `refactor:` `build:` `chore:`.
@@ -269,203 +269,12 @@ Then in Visual Studio: **File → Open → Project/Solution → `Tapedeck.sln`**
 
 ---
 
-## 7. Antigravity prompts
-Open **your clone** of the repo in Antigravity (Agent mode). Paste the **Context** block first in every new conversation, then the prompt for your task. When the agent finishes, open the same file in `Tapedeck-reference` and ask the agent to compare the two.
-
-### 7.0 Context (everyone, paste first)
-```
-Project: Tapedeck, an OOP10 media player in C# Windows Forms (.NET 8, net8.0-windows, x64), built with Visual Studio 2026. Do not change the target framework or convert the .sln.
-Playback engine: LibVLCSharp.WinForms 3.9.0 + VideoLAN.LibVLC.Windows 3.0.21.
-Namespace: mediaPlayerPrj (file-scoped). Folders: Core/ (data classes, algorithms), Data/ (file I/O), UI/ (forms, Theme).
-TapedeckForm is split into partial files; each file has one owner. Some files are PLACEHOLDERS with the right
-member names but empty bodies. When I ask you to write a file, REPLACE the whole placeholder and keep every
-member name and signature that is already there. Never edit files I did not name.
-Course rules – follow all of them:
-- PascalCase classes/methods/properties, camelCase locals, control prefixes (btnPlay, lblTitle, trackVolume, listView1).
-- XML /// comments on every public class and member.
-- No repeated magic strings or numbers: use const.
-- Wrap file and media operations in try-catch; never an empty catch; tell the user (SetStatus or ShowError).
-- Short single-purpose methods. UI, data classes and file I/O stay in separate classes.
-- Polymorphism: the playlist is List<MediaItem>; no long if/else type checks.
-- Never use List.Sort, OrderBy or LINQ to sort the playlist.
-- Library.txt line format: Type|Title|Artist|hh:mm:ss|FilePath|Album or Resolution (6 fields).
-Read PRD.md and docs/01_Requirements.md before writing code.
-```
-
-### 7.1 JOEY prompts
-**J2–J5 – Core classes**
-```
-Create, one file at a time (stop after each so I can commit):
-Core/IMediaControls.cs – interface with Play, Pause, Stop, Next, Previous.
-Core/RepeatMode.cs – enum Off, All, One.
-Core/TimeFormat.cs – static ToClock(TimeSpan) -> "hh:mm:ss" (negative -> zero), const Zero "00:00:00"; XML summary says it replaces the duplicated FormatTime/DurationText logic (Appendix C.5 refactoring).
-Core/MediaItem.cs – abstract: consts UnknownTitle, UnknownArtist, MaxRating 5, FieldSeparator '|'; validated properties Title (blank -> "Unknown Title"), Artist (blank -> "Unknown Artist"), Duration (negative -> zero), FilePath (null -> ""), IsFavorite, Rating (clamped 0-5); read-only DurationText, FileName, RatingStars; protected constructor; abstract MediaType, Extra, ExtraLabel; virtual ToFileLine() joining the 6 fields with '|' (a '|' inside a field becomes '/'); ToString() "Artist - Title".
-Core/AudioItem.cs – Album (blank -> "Unknown Album"); Core/VideoItem.cs – Resolution (blank -> "Unknown Resolution").
-Core/MediaFormats.cs – consts .mp3/.mp4 and DialogFilter (with "All files"); IsSupported, IsVideoFile; factory Create(type, title, artist, duration, path, extra) with ONE switch ("Audio" -> AudioItem, "Video" -> VideoItem, else null).
-```
-
-**J6 – Theme**
-```
-Create UI/Theme.cs (static) holding ALL skin settings: AssetsFolder, BackgroundFile "tapedeck_skin.png", LogoFile, IconFile, Borderless = true, TransparentColor, FormSize 980x620; TitleBarHeight 46, MenuHeight 24; colours BackColor and CardColor silver (192,192,192), AccentColor navy (0,0,128), AccentAltColor teal (0,128,128), LabelColor black, MutedColor (80,80,80), TitleTextColor white, TitleMutedColor (200,210,235), ListBackColor white, ListTextColor black, NowPlayingRowColor navy, NowPlayingTextColor white, ToggleOnColor (214,222,238), MenuBackColor silver, MenuHighlightColor (184,196,228); const FontName "Tahoma"; const names of every button PNG (btn_play, btn_pause, btn_stop, btn_next, btn_prev, btn_shuffle, btn_repeat, btn_close, btn_min, btn_heart).
-LoadImage (FileNotFoundException when missing; copy through a MemoryStream so the file is not locked), LoadIcon, GetAssetPath, StyleImageButton and StyleTextButton giving classic raised buttons (FlatStyle.Standard, UseVisualStyleBackColor false, silver face; image buttons keep their text and return false if the image fails), EnableDrag (ReleaseCapture + SendMessage WM_NCLBUTTONDOWN/HTCAPTION), nested MenuColorTable : ProfessionalColorTable (silver menu, soft navy highlight).
-```
-
-**J8 – BasePlayerForm**
-```
-Create UI/BasePlayerForm.cs: concrete class BasePlayerForm : Form, IMediaControls with a parameterless constructor.
-- Private LibVLC _libVLC, MediaPlayer _player, Random _random, string _loadedPath, bool _isPaused. Protected VideoView VideoSurface, List<MediaItem> Playlist, int CurrentIndex = -1. Public ShuffleEnabled, RepeatMode Repeat.
-- Constructor returns early in design mode (LicenseManager.UsageMode). Otherwise Core.Initialize(), create engine, player and VideoView (Dock Fill, black); subscribe EndReached and EncounteredError; catch VLCException and InvalidOperationException -> ShowError.
-- Protected IsDesignTime, IsPlaying, IsPaused, ElapsedTime, PlaybackPosition, CurrentItem; AttachVideo(Control); SetPlaylist(List<MediaItem>) keeping CurrentIndex on the same item.
-- virtual Play (empty library message; resume if paused on the same file; missing file -> stop, SetStatus + ShowError; else play new Media(_libVLC, path, FromType.FromPath) and OnNowPlayingChanged), Pause, Stop, Next (shuffle -> random index that is not the current one), Previous, SetVolume(0-100), Seek(0-1).
-- EndReached/EncounteredError run on a VLC thread: BeginInvoke to the UI thread. PlayNextOrStop: One -> Play(); shuffle/All/not last -> Next(); else Stop().
-- protected virtual OnNowPlayingChanged, ApplyTheme, SetStatus, ShowError (MessageBox with TeamInfo.AppTitle).
-- protected async Task<MediaItem> ReadMediaItemAsync(path): Media.Parse(ParseLocal, 5000); title (fallback file name), artist, duration, album; for mp4 the first video track's WidthxHeight.
-- OnFormClosed: unsubscribe, stop, dispose VideoView, player, LibVLC.
-```
-
-**J9–J13 – The form**
-```
-1) UI/TapedeckForm.Designer.cs (980x620, AutoScaleMode Font, Tahoma 9): pnlHeader (0,0,980,46) – the title bar – with picLogo, lblAppTitle, lblGroup, btnMinimize (912,11,26x24), btnClose (942,11,26x24); the menu strip is placed at y=46 in code; pnlVideo (20,80,560,315) black with nothing on it; lblNowCaption "Now playing" (32,411) and lblLibrary "Library" (612,91) as group-box captions, lblTitle 16pt bold, lblArtist, lblExtra, lblElapsed (Consolas, right); trackSeek (0-1000); btnPrevious, btnPlay + btnPause (same spot), btnStop, btnNext, btnShuffle, btnRepeat, lblRepeat, lblVolume, trackVolume (0-100 = 80); lblLibrary, lblCount, txtSearch, btnSearch, listView1 (Details, columns Title, Artist, Album/Res, Length, "♥ ★"); btnAdd, btnAddFolder, btnRemove, btnFavorite, lblRating, cboRating ("Not rated".."★★★★★"); lblStatus (14,594,782x18) and lblCount (812,594,154x18) inside the two sunken status-bar panels; toolTip1. Wire every event to <control>_<Event>.
-2) UI/TapedeckForm.cs: constants, fields (tmrElapsed, menuMain, shuffleItem, repeatItem, _boldListFont, _userIsSeeking, _updatingRating), constructor (InitializeComponent; return in design time; BuildMenu; ApplyTheme; AttachVideo(pnlVideo); SetVolume; tooltips; start 500 ms timer), OnShown -> LoadLibraryFromFile, overrides SetStatus, ShowError, ApplyTheme (title-bar labels white, captions navy on silver, classic buttons, borderless + EnableDrag on the title bar), close/minimize, OnFormClosing saves, OnFormClosed disposes.
-3) UI/TapedeckForm.View.cs: SelectedIndex, SelectedItem, RefreshListView (rows with FavoriteText, tooltip type+path, grey if missing, current row navy with white bold text, keep selection, lblCount), SelectRow, ShowNowPlaying, double-click/Enter -> PlaySelected, Delete -> btnRemove_Click, SelectedIndexChanged updates cboRating (guarded) and the ♥ button text.
-4) UI/TapedeckForm.AddMedia.cs: btnAdd_Click, btnAddFolder_Click (recursive, IgnoreInaccessible, supported only), AddFilesAsync (count added/unsupported/duplicates/failed; await into a variable before Playlist.Add; save; message), ContainsPath.
-5) UI/TapedeckForm.Playback.cs: overrides Play/Pause/Stop/OnNowPlayingChanged; btnPlay_Click (picks the selected row – not inside the override, because Next() calls Play()); other buttons; SetShuffle, CycleRepeat, UpdateModeButtons (pressed-in face when on); volume, seek, tmrElapsed_Tick.
-6) UI/TapedeckForm.Menu.cs: menu placed under the title bar (Dock None, Location (0, Theme.TitleBarHeight), width of the form); File / Playback / Library / Help with the shortcuts in docs/06_User_Manual.md 7.8; one CreateItem helper; items call the button handlers; ShowAbout, ShowShortcuts.
-Then copy the placeholders TapedeckForm.Library.cs, .SortSearch.cs, .Favorites.cs from integration/placeholders/Tapedeck/UI/ and build. Stop after each numbered file so I can commit.
-```
-
-**J14 – Program**
-```
-Replace Tapedeck/Program.cs: SetUnhandledExceptionMode(CatchException) + ThreadException handler (MessageBox); ApplicationConfiguration.Initialize(); show SplashForm with ShowDialog in a using; Application.Run(new TapedeckForm()).
-```
-
-**J17 – Release**
-```
-Walk me through publishing this WinForms app as Release, win-x64, self-contained, not single-file, not trimmed, to bin\Release\publish; list what must be inside (exe, Assets, libvlc\win-x64) and a test checklist for another PC.
-```
-
-### 7.2 HEAVEN prompts
-**H1–H3 – LibraryStore** *(replaces the placeholder)*
-```
-Replace Data/LibraryStore.cs (static class). Keep FileName "Library.txt" and DefaultPath. Add private consts FieldCount = 6 and the six field indexes.
-Save(path, List<MediaItem> items): write every item.ToFileLine() to path + ".tmp" (UTF-8), then File.Move(temp, path, true) so a crash cannot corrupt the library.
-Load(path, out int skippedLines): missing file -> empty list (first run); skip blank lines; ParseLine returns null for a damaged line, which is counted.
-ParseLine(string line): Split on MediaItem.FieldSeparator; exactly 6 fields; TimeSpan.TryParse the duration; path not blank; then MediaFormats.Create(...).
-XML comments must say callers catch IOException and UnauthorizedAccessException.
-Do it in three steps (Save, Load, ParseLine) and stop after each so I can commit.
-```
-
-**H4–H5 – FavoritesStore** *(replaces the placeholder)*
-```
-Replace Data/FavoritesStore.cs (static). Keep FileName "Favorites.txt" and DefaultPath.
-Save(path, items): write "FilePath|1or0|rating" only for items that are favorite or rated (UTF-8).
-Apply(path, items, out int skippedLines): missing file -> nothing; build a case-insensitive Dictionary from FilePath to item; for each line split on '|', need 3 fields and an int rating, else count as skipped; set IsFavorite and Rating on the matching item.
-Stop after Save so I can commit, then add Apply.
-```
-
-**H6–H8 – Library part of the form** *(replaces the placeholder)*
-```
-Replace UI/TapedeckForm.Library.cs ("public partial class TapedeckForm"; usings System.ComponentModel and System.Diagnostics). Keep the same member names as the placeholder.
-1) LoadLibraryFromFile: LibraryStore.Load + FavoritesStore.Apply inside try-catch (IOException, UnauthorizedAccessException -> ShowError and start empty); CurrentIndex = -1; SetPlaylist(items); RefreshListView(); if lines were skipped ShowError("N damaged line(s)… were skipped"); status "Loaded N item(s)…" or "The library is empty. Add files with Ctrl+O." plus how many files are missing.
-   SaveLibraryToFile: LibraryStore.Save + FavoritesStore.Save; catch IOException and UnauthorizedAccessException (hint: move the app to Documents). SaveWithStatus: save + status.
-2) btnRemove_Click: nothing selected -> status; removing the playing item -> Stop(), CurrentIndex = -1, ShowNowPlaying(null); removing an item above it -> CurrentIndex--; RemoveAt; RefreshListView; save; status.
-3) ReloadLibrary (Stop, ShowNowPlaying(null), LoadLibraryFromFile); btnOpenNotepad_Click (save first; Process.Start notepad.exe with the quoted path, UseShellExecute false; catch Win32Exception and InvalidOperationException; status tells the user to use File > Reload Library); CountMissingFiles.
-Stop after each numbered part so I can commit.
-```
-
-**H10–H11 – Diagrams**
-```
-Read UI/BasePlayerForm.cs, UI/TapedeckForm.Playback.cs and Data/LibraryStore.cs. Write PlantUML for (1) a use case diagram with actors User and File System (Add Media, Play/Pause/Stop, Next/Previous, Volume/Seek, Sort, Search, Shuffle/Repeat, Favorite/Rate, Remove, Splash/About, Open in Notepad, Save Library, Load Library, Read Media Info, Report Error, Show Elapsed Time) with «include» Save Library and «extend» Report Error; (2) a sequence diagram "User presses Play" from the click to OnNowPlayingChanged, with an alt block for a missing file and a loop for the 500 ms timer; (3) a sequence diagram "Load Library.txt at start-up". Every message must match a real method name. Then write short descriptions (actor, main flow, alternate flow) for Add Media, Play Media, Save/Load Library, Sort, Search, Shuffle/Repeat and Favorite/Rate.
-```
-
-**H12–H13 – Deployment**
-```
-Using Tapedeck/Tapedeck.csproj, write the deployment guide: system requirements; Visual Studio publish steps (Release, net8.0-windows, win-x64, self-contained, no single file, no trimming); the dotnet publish command; what the publish folder must contain; how to zip it as G3_BSCS2A_Release.zip; a checklist to test it on a second computer; known limitations. Then give me a table to record my own test results.
-```
-
-### 7.3 AMMAAR prompts
-**A1–A4 – LibrarySorter** *(replaces the placeholder)*
-```
-Replace Core/LibrarySorter.cs. Keep enum SortKey { Title, Artist, AlbumOrResolution, Duration, Rating } exactly as it is.
-Static class LibrarySorter:
-Compare(a, b, key): OrdinalIgnoreCase for Title, Artist and Extra; Duration.CompareTo; Rating reversed so 5 stars come first.
-InsertionSort(List<MediaItem> items, SortKey key): written by hand – no List.Sort, OrderBy or LINQ.
-BinarySearchByTitle(items, title): index or -1 (list must already be sorted by title).
-FindFirstContaining(items, text): first index whose Title or Artist contains the text (OrdinalIgnoreCase), or -1.
-In the class XML summary explain why insertion sort (stable, fast on nearly-sorted lists, in place), best O(n), worst O(n^2).
-Add one method at a time and stop after each so I can commit.
-```
-
-**A5–A7 – Sort and search in the form** *(replaces the placeholder)*
-```
-Replace UI/TapedeckForm.SortSearch.cs ("public partial class TapedeckForm"). Keep the same member names as the placeholder.
-SortLibrary(SortKey key): fewer than 2 items -> return; copy Playlist into a new List; LibrarySorter.InsertionSort(copy, key); SetPlaylist(copy) so the playing item stays current; RefreshListView(); SaveLibraryToFile(); SetStatus("Sorted by " + key + " (insertion sort).").  [commit]
-listView1_ColumnClick: TitleColumn..RatingColumn -> the matching SortKey.  [commit]
-public SearchLibrary(string text): trim; empty -> status; empty library -> status; SortLibrary(SortKey.Title); BinarySearchByTitle; if -1 FindFirstContaining; no match -> "No match for …"; else SelectRow, focus the list, status naming the method used. btnSearch_Click calls it; txtSearch_KeyDown on Enter (SuppressKeyPress).  [commit]
-```
-
-**A8–A10 – Docs**
-```
-1) Check docs/01_Requirements.md against PRD.md section 2 and the code: for every FR, confirm the "Where it is implemented" column names real methods. Fix anything wrong.
-2) Check docs/02b_UML_Class_and_Sorting.md and docs/diagrams/class_diagram.puml against the code: every class, interface, inheritance arrow, override and association must match. List differences and fix the diagram source.
-3) Write an insertion-sort trace by title on [Sunrise, Apple, Night, Bass] (pass, current item, comparisons and shifts, list after the pass), total comparisons and shifts, best/worst/average running time, and why we chose insertion sort over selection and bubble sort. Under 300 words.
-```
-
-### 7.4 MADDOX prompts
-**M1 – Team info** *(replaces the placeholder)*
-```
-Replace UI/TeamInfo.cs. Keep class TeamMember (Name, Role, PhotoFile, constructor) and static TeamInfo with AppTitle "Tapedeck", GroupName, Section, LogoFile.
-Members, in this order: Joey Cuison – "Team lead / player engine, UI and integration" – Team\joey.jpg; Heaven – "Library saving, loading and deployment" – Team\heaven.jpg; Ammaar Azmy – "Sorting and searching" – Team\ammaar.jpg; Christian Maddox Rivera – "Skin design and splash screen" – Team\maddox.jpg; Valencia Genevieve – "Favorites, testing and user manual" – Team\genevieve.jpg.
-```
-
-**M3–M5 – Splash screen** *(replaces the placeholder)*
-```
-Replace UI/SplashForm.cs (no designer file, follows Appendix C.2 of the course guide):
-Step 1: borderless with a raised 3D border painted with ControlPaint.DrawBorder3D, CenterScreen, 784x370, Theme.BackColor/LabelColor, no taskbar button, KeyPreview; logo PictureBox 72x72 from TeamInfo.LogoFile; title 22pt bold in Theme.AccentColor; "Group | Section | OOP10" in Theme.MutedColor.  [commit]
-Step 2: a FlowLayoutPanel at (24,112), 736x205, with one 144 px card per TeamInfo member: 96 px photo (Zoom), bold name, muted role. If the photo is missing or not an image (catch IOException and ArgumentException) show a grey placeholder and add " (no photo)" to the name.  [commit]
-Step 3: a System.Windows.Forms.Timer of 3000 ms; close on tick, on any click (also on child controls) or key press by setting DialogResult = OK; hint label "Click or press any key to skip"; dispose the timer in OnFormClosed.  [commit]
-```
-
-**M6–M8 – Canva**
-```
-I am recreating our retro late-90s desktop skin in Canva at exactly 980 x 620 px (silver window with 3D bevels, navy-to-blue title bar, etched group boxes, sunken status bar – inspired by Win9x music players, but all our own graphics). Using Assets/tapedeck_skin.png and docs/design/design_concept_mockup.png as the layout, list every area and its pixel rectangle (title bar 0-46, menu row 46-70, sunken video well 18,78-581,396, "Now playing" group box 22,418-578,584, "Library" group box 602,98-958,584, playlist well 614,150-945,479, status panels 8,590-800,614 and 806,590-971,614), the colours from UI/Theme.cs, and a step-by-step Canva checklist for exporting the background PNG, a 512x512 transparent cassette-tape logo and a .ico with 16/32/48/256 sizes. Then write a 120-word design rationale for the portfolio.
-```
-
-### 7.5 GENEVIEVE prompts
-**G1–G3 – Test plan**
-```
-Read PRD.md sections 2–3 and docs/05_Testing.md. Check that every Must requirement (FR1–FR5, FR7, FR9–FR13) and FR6/FR8 has at least one test case, and that there are negative tests for: missing file, corrupt line in Library.txt, empty library, unsupported format, one-item list, last item with Repeat Off. List any gaps and write the missing cases in the same table (ID | Feature | Steps | Expected result | Actual result | Pass / Fail).
-```
-
-**G4–G6 – Favorites in the form** *(replaces the placeholder)*
-```
-Replace UI/TapedeckForm.Favorites.cs ("public partial class TapedeckForm"). Keep the same member names as the placeholder.
-1) public ToggleFavorite(): SelectedItem, or CurrentItem if nothing is selected; none -> SetStatus("Select an item to mark as favorite."); flip IsFavorite; RefreshListView(); SaveLibraryToFile(); if it is the playing item ShowNowPlaying(item); btnFavorite.Text "♥ Unfav" / "♥ Fav"; status. btnFavorite_Click calls it.  [commit]
-2) public SetRating(int stars): SelectedItem only (none -> status); item.Rating = stars; refresh, save, update Now Playing if playing; status with item.RatingStars. cboRating_SelectedIndexChanged returns when _updatingRating is true or nothing is selected, else SetRating(cboRating.SelectedIndex).  [commit]
-3) private static FavoriteText(MediaItem item): "♥" if favorite plus "N★" if rated.  [commit]
-```
-
-**G9 – User manual**
-```
-Using the running app, docs/06_User_Manual.md and UI/TapedeckForm.Menu.cs, check every keyboard shortcut in the manual matches the code, and that the troubleshooting table covers every message the app can show (search the code for ShowError and SetStatus). List mismatches and fix the manual.
-```
-
-### 7.6 Everyone – before the presentation
-```
-Explain <my file>.cs line by line in simple English. Then ask me 5 questions the instructor could ask about it (OOP concepts, exception handling, why this design) and check my answers. Do not change the code.
-```
-```
-Build the solution. For each compiler error or warning, explain the cause and propose the smallest fix that follows the course rules in the Context block. Do not rename public members.
-```
-
----
-
-## 8. Schedule
+## 7. Schedule
 
 | When | Joey | Heaven | Ammaar | Maddox | Genevieve |
 |---|---|---|---|---|---|
 | **Sun Nov 8 (tonight)** | J1–J8 | accept invite, clone, set up reference folder | same | same | same |
-| **Mon Nov 9 AM** | J9–J14 → **"foundation is in main" by 12:00** | read the PRD and your prompts | same | same | G1 |
+| **Mon Nov 9 AM** | J9–J14 → **"foundation is in main" by 12:00** | read the PRD and your tasks | same | same | G1 |
 | **Mon Nov 9 PM** | review + merge PRs | H1–H5 | A1–A4 | M1–M4 | G2–G3 |
 | **Tue Nov 10** ⏰ M1–M3 due | merge, build, submit | H6–H11 | A5–A10 | M5–M8 | G4–G6 |
 | **Wed Nov 11** | J16–J17 | fixes | fixes | fixes | G7–G8 |
@@ -475,7 +284,7 @@ Build the solution. For each compiler error or warning, explain the cause and pr
 
 After the foundation, **merge order does not matter**: every combination of real and placeholder files builds.
 
-## 9. Definition of done (check before Nov 14)
+## 8. Definition of done (check before Nov 14)
 - [ ] All FR1–FR13 work in the Release build on a second PC.
 - [ ] `main` builds with 0 errors and no placeholder left (search the code for "PLACEHOLDER").
 - [ ] Each member has ≥ 10 meaningful commits and at least one merged pull request.

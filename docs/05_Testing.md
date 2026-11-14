@@ -45,11 +45,11 @@ The test cases below follow the Appendix B.1 format. The Actual result and Pass 
 | TC05 | Item information | Add a tagged .mp3 and an .mp4; check the columns | Audio shows album; video shows resolution; missing tags show "Unknown" | Tags shown for the mp3; resolution (1280x720) shown for the mp4. | Pass |
 | TC06 | Save and reload | Add items, close, reopen | `Library.txt` in 6-field format; same items reload | `Library.txt` correct; status "Loaded 6 item(s) from Library.txt." | Pass |
 | TC07 | Edit in Notepad and reload | Ctrl+L, edit a title, save; Ctrl+Shift+L | Edited title shown without restarting | Edited title appeared after reload. | Pass |
-| TC08 | Play, Pause, Stop | F5, F6, F5, F7 | Pause keeps the position; Stop resets elapsed time to 00:00:00 | All three worked; Stop returned to 00:00:00. | Pass |
+| TC08 | Play, Pause, Stop | F5, F6, F5, F7 | Pause keeps the position; Stop resets elapsed time to 00:00:00 | All three worked; Stop returned to 00:00:00. Retested at 200% after the B06 fix. | Pass |
 | TC09 | Next and Previous | Ctrl+Right past the last item; Ctrl+Left on the first item | Wraps from last to first and first to last | Both wrapped as expected. | Pass |
 | TC10 | Volume | Ctrl+Up and Ctrl+Down repeatedly | Changes in steps of 10; stops at 0 and 100 | Volume changed smoothly and stopped at 0 and 100. | Pass |
-| TC11 | Seek | Drag the seek bar; arrow keys on the bar | Playback jumps to the chosen position | Position changed immediately with mouse and keys (at 100% scaling). | Pass |
-| TC12 | Playlist and Now Playing | Double-click item 2 | Item plays; Now Playing filled in; row highlighted in teal; window title "Title - Artist - Tapedeck" | Item played; row highlighted in teal (`06_User_Manual.md` Figure 4); Now Playing showed title, artist, type and resolution. Window title not yet checked. | To be confirmed |
+| TC11 | Seek | Drag the seek bar; arrow keys on the bar | Playback jumps to the chosen position | Position changed immediately with mouse and keys (at 100% scaling; retested at 200% after the B06 fix). | Pass |
+| TC12 | Playlist and Now Playing | Double-click item 2 | Item plays; Now Playing filled in; row highlighted in teal; window title "Title - Artist - Tapedeck" | Item played; row highlighted in teal (`06_User_Manual.md` Figure 4); Now Playing showed title, artist, type and resolution; the window title in the taskbar showed "Title - Artist - Tapedeck". | Pass |
 | TC13 | Empty library **[N]** | No items; press F5, Next, Previous, Stop | "The library is empty. Add some files first."; no exception | Message shown; no crash. | Pass |
 | TC14 | Corrupt `Library.txt` **[N]** | Replace `Library.txt` with `Library_corrupt.txt`, start | Damaged lines skipped and counted; valid lines load | App opened; damaged lines skipped and reported; valid items loaded. | Pass |
 | TC15 | Missing file **[N]** | Add a file, rename it in Explorer, play it | Row greyed out; "This file was moved or deleted"; no crash | Row greyed out; status and warning shown (`06_User_Manual.md` Figure 6); no crash. | Pass |
@@ -96,11 +96,11 @@ The test cases below follow the Appendix B.1 format. The Actual result and Pass 
 |---|---|---|
 | **Test cases planned** | 28 | Including 9 negative test cases. |
 | **Executed** | 28 | All planned test cases were run. |
-| **Passed** | 27 | All other executed tests met the expected results. |
+| **Passed** | 28 | All executed tests met the expected results. |
 | **Failed** | 0 | — |
-| **To be confirmed** | 1 | TC12: the window title in the taskbar still has to be checked. |
+| **To be confirmed** | 0 | — |
 
-One defect, B06, was found outside the test cases while capturing the user-manual screenshots: at 200% display scaling the elapsed time and the seek bar are covered. At 100% they display correctly, which is why TC08 and TC11 passed. B06 is recorded in the bug log (Section 6.3).
+One defect, B06, was found outside the test cases while capturing the user-manual screenshots: at 200% display scaling the elapsed time and the seek bar were covered (at 100% they displayed correctly). B06 was fixed and retested at 200% – Pass. It is recorded in the bug log (Section 6.3).
 
 ### 6.2.2 Release Build Test on a Second Computer
 

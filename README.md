@@ -16,7 +16,7 @@ A Winamp-style desktop media player in **C# Windows Forms (.NET 8)** with **LibV
 | **Christian Maddox Rivera** (Maddox) | Skin design and splash screen | `UI/TeamInfo.cs`, `UI/SplashForm.cs`, `Assets/` (Canva), credits, slides | FR9, skin |
 | **Valencia Genevieve** (Genevieve) | Favorites, testing and user manual | `UI/TapedeckForm.Favorites.cs`, test plan, bug log, user manual, portfolio | FR8 (UI), testing |
 
-Each member's step-by-step tasks, commit messages and **Antigravity prompts** are in **[PRD.md](PRD.md)** (section 6 and 7).
+Each member's step-by-step tasks and commit messages are in **[PRD.md](PRD.md)** (section 6).
 
 ## ✅ Features
 
@@ -41,7 +41,7 @@ Each member's step-by-step tasks, commit messages and **Antigravity prompts** ar
 1. Clone: `git clone https://github.com/joeycuison333-stack/Tapedeck-OOP10.git`
 2. Keep the project ZIP extracted in a **separate** `Tapedeck-reference` folder. Never commit from it.
 3. For each task: `git checkout main` → `git pull` → `git checkout -b feature/<name>`
-4. Wait for Joey's "foundation is in main" message (Mon Nov 9, noon). Replace **your own placeholder file** using the Antigravity prompt in PRD.md, make sure **Build** succeeds, then:
+4. Wait for Joey's "foundation is in main" message (Mon Nov 9, noon). Replace **your own placeholder file** following your tasks in PRD.md, make sure **Build** succeeds, then:
    ```
    git add <your files>
    git commit -m "feat: <message from PRD.md>"
@@ -60,7 +60,7 @@ Tapedeck/
   Assets/      skin, logo.png, logo.ico, button images, Team/ photos
 docs/          requirements, UML (02a, 02b), development log, version control, tests, user manual, deployment, presentation, credits
 integration/   placeholder files Joey pushes first so main always builds (not part of the final app)
-PRD.md         requirements and task division with prompts
+PRD.md         requirements and task division
 ```
 
 ## 📅 Milestones

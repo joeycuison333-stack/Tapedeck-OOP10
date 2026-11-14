@@ -58,7 +58,7 @@ Every task in Part 5 follows the exact same five steps:
    ```
    The first line must say `On branch <your-branch-name>`. If it says `main`, run `git checkout <your-branch-name>` first.
 
-2. **Write the code.** Open the repo in Antigravity (Agent mode). Paste the **Context block** from `PRD.md` section 7.0 first (only once per new conversation), then paste the prompt for your task from your section of `PRD.md` section 7 (7.2 Heaven, 7.3 Ammaar, 7.4 Maddox, 7.5 Genevieve). Compare the result with the same file in `Tapedeck-reference`.
+2. **Write the code.** Open the project in Visual Studio and write the file(s) for your task (Part 5), replacing the placeholder. Compare the result with the same file in `Tapedeck-reference`.
 
 3. **Build it.** In Visual Studio: **Ctrl+Shift+B**. It must say `Build succeeded` with 0 errors before you continue.
 
@@ -100,7 +100,7 @@ For every row: `git add` only the listed file(s), then `git commit -m` with the 
 ### 💾 Heaven
 **Your files:** `Data/LibraryStore.cs`, `Data/FavoritesStore.cs`, `UI/TapedeckForm.Library.cs`, `docs/02a_UML_Use_Case_and_Sequence.md`, `docs/07_Deployment_Guide.md`, `docs/diagrams/`, `docs/test-data/`
 
-**Branch `feature/library-store`** (Antigravity prompts: PRD.md 7.2 "H1–H3" and "H4–H5")
+**Branch `feature/library-store`**
 | Task | `git add` | `git commit -m` | Due |
 |---|---|---|---|
 | H1 Save Library.txt | `Data/LibraryStore.cs` | `feat: save library to Library.txt` | Nov 9 |
@@ -111,7 +111,7 @@ For every row: `git add` only the listed file(s), then `git commit -m` with the 
 
 → Push, then open a Pull Request for `feature/library-store` (Part 4).
 
-**Branch `feature/library-form`** (Antigravity prompt: PRD.md 7.2 "H6–H8")
+**Branch `feature/library-form`**
 | Task | `git add` | `git commit -m` | Due |
 |---|---|---|---|
 | H6 Load/save in the form | `UI/TapedeckForm.Library.cs` | `feat: load and save the library in the form` | Nov 10 |
@@ -121,7 +121,7 @@ For every row: `git add` only the listed file(s), then `git commit -m` with the 
 
 → Push, then open a Pull Request for `feature/library-form`.
 
-**Branch `docs/uml-deployment`** (Antigravity prompts: PRD.md 7.2 "H10–H11" and "H12–H13")
+**Branch `docs/uml-deployment`**
 | Task | `git add` | `git commit -m` | Due |
 |---|---|---|---|
 | H10 Use case diagram | `docs/02a_UML_Use_Case_and_Sequence.md` `docs/diagrams/use_case_diagram.png` | `docs: use case diagram and descriptions` | Nov 10 |
@@ -136,7 +136,7 @@ For every row: `git add` only the listed file(s), then `git commit -m` with the 
 ### 🧩 Ammaar Azmy
 **Your files:** `Core/LibrarySorter.cs`, `UI/TapedeckForm.SortSearch.cs`, `docs/01_Requirements.md`, `docs/02b_UML_Class_and_Sorting.md`, `docs/diagrams/class_diagram.*`
 
-**Branch `feature/sorter`** (Antigravity prompt: PRD.md 7.3 "A1–A4")
+**Branch `feature/sorter`**
 | Task | `git add` | `git commit -m` | Due |
 |---|---|---|---|
 | A1 Compare by sort key | `Core/LibrarySorter.cs` | `feat: compare media items by sort key` | Nov 9 |
@@ -146,7 +146,7 @@ For every row: `git add` only the listed file(s), then `git commit -m` with the 
 
 → Push, then open a Pull Request for `feature/sorter`.
 
-**Branch `feature/sort-search-form`** (Antigravity prompt: PRD.md 7.3 "A5–A7")
+**Branch `feature/sort-search-form`**
 | Task | `git add` | `git commit -m` | Due |
 |---|---|---|---|
 | A5 SortLibrary | `UI/TapedeckForm.SortSearch.cs` | `feat: sort the playlist and keep the current item` | Nov 10 |
@@ -155,7 +155,7 @@ For every row: `git add` only the listed file(s), then `git commit -m` with the 
 
 → Push, then open a Pull Request for `feature/sort-search-form`.
 
-**Branch `docs/requirements-class`** (Antigravity prompt: PRD.md 7.3 "A8–A10")
+**Branch `docs/requirements-class`**
 | Task | `git add` | `git commit -m` | Due |
 |---|---|---|---|
 | A8 Requirements spec | `docs/01_Requirements.md` | `docs: requirements specification` | Nov 10 |
@@ -169,7 +169,7 @@ For every row: `git add` only the listed file(s), then `git commit -m` with the 
 ### 🎨 Christian Maddox Rivera (Maddox)
 **Your files:** `UI/TeamInfo.cs`, `UI/SplashForm.cs`, `Assets/` (all images), `docs/design/`, `docs/09_Credits.md`
 
-**Branch `feature/splash`** (Antigravity prompts: PRD.md 7.4 "M1", "M3–M5")
+**Branch `feature/splash`**
 | Task | `git add` | `git commit -m` | Due |
 |---|---|---|---|
 | M1 Team info | `UI/TeamInfo.cs` | `feat: add team info for all members` | Nov 9 |
@@ -180,7 +180,7 @@ For every row: `git add` only the listed file(s), then `git commit -m` with the 
 
 → Push, then open a Pull Request for `feature/splash`.
 
-**Branch `design/canva-skin`** (Antigravity prompt: PRD.md 7.4 "M6–M8")
+**Branch `design/canva-skin`**
 | Task | `git add` | `git commit -m` | Due |
 |---|---|---|---|
 | M6 Canva skin background | `Assets/tapedeck_skin.png` | `feat: add Canva skin background` | Nov 10 |
@@ -188,7 +188,7 @@ For every row: `git add` only the listed file(s), then `git commit -m` with the 
 
 → Push, then open a Pull Request for `design/canva-skin`.
 
-**Branch `docs/design`** (Antigravity prompt: PRD.md 7.4 "M6–M8", plus M9–M10)
+**Branch `docs/design`**
 | Task | `git add` | `git commit -m` | Due |
 |---|---|---|---|
 | M8 Design concept doc | `docs/design/` | `docs: design concept and Canva source` | Nov 10 |
@@ -202,7 +202,7 @@ For every row: `git add` only the listed file(s), then `git commit -m` with the 
 ### ⭐ Valencia Genevieve (Genevieve)
 **Your files:** `UI/TapedeckForm.Favorites.cs`, `docs/00_Cover.md`, `docs/05_Testing.md`, `docs/06_User_Manual.md`, `docs/08_Presentation_and_Reflections.md`, `docs/10_Appendix_Source.md`, `docs/screenshots/`
 
-**Branch `test/test-plan`** (Antigravity prompt: PRD.md 7.5 "G1–G3")
+**Branch `test/test-plan`**
 | Task | `git add` | `git commit -m` | Due |
 |---|---|---|---|
 | G1 Test plan | `docs/05_Testing.md` | `docs: add test plan` | Nov 9 |
@@ -213,7 +213,7 @@ For every row: `git add` only the listed file(s), then `git commit -m` with the 
 
 → Push, then open a Pull Request for `test/test-plan`. (G7–G8 can be a second PR from the same branch if you've already merged once — ask Joey if unsure.)
 
-**Branch `feature/favorites`** (Antigravity prompt: PRD.md 7.5 "G4–G6")
+**Branch `feature/favorites`**
 | Task | `git add` | `git commit -m` | Due |
 |---|---|---|---|
 | G4 Toggle favorite | `UI/TapedeckForm.Favorites.cs` | `feat: toggle favorites` | Nov 10 |
@@ -222,7 +222,7 @@ For every row: `git add` only the listed file(s), then `git commit -m` with the 
 
 → Push, then open a Pull Request for `feature/favorites`.
 
-**Branch `docs/manual-portfolio`** (Antigravity prompt: PRD.md 7.5 "G9")
+**Branch `docs/manual-portfolio`**
 | Task | `git add` | `git commit -m` | Due |
 |---|---|---|---|
 | G9 User manual | `docs/06_User_Manual.md` | `docs: user manual` | Nov 12 |
