@@ -1,0 +1,6 @@
+# Maps each member's commit emails to one name, so `git shortlog -sn` counts commits correctly.
+# Maddox's early commits used a misspelled email ("chrsitian"), which GitHub does not link to his account.
+Christian Maddox Rivera <rivera.christianmaddox@student.auf.edu.ph> <rivera.chrsitianmaddox@student.auf.edu.ph>
+Christian Maddox Rivera <rivera.christianmaddox@student.auf.edu.ph> Maddox <rivera.christianmaddox@student.auf.edu.ph>
+Christian Maddox Rivera <rivera.christianmaddox@student.auf.edu.ph> Maddox44907 <rivera.christianmaddox@student.auf.edu.ph>
+Sean Caling (Heaven) <seankeithheaven@gmail.com>

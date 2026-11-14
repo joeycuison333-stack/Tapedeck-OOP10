@@ -37,13 +37,33 @@ Conflicts were mostly avoided by design: the form is split into partial-class fi
 
 ## 5.5 Meeting log
 
+The team met online in its Messenger group chat; decisions were posted there and in the shared Google Drive folder.
+
 | Date | Attendees | Decisions |
 |---|---|---|
-| Nov 8 | All five | Chose app name and theme (Tapedeck, retro late-90s desktop look). Enhancement: favorites + ratings. Sorting: insertion sort. Roles and workload as in 5.3 and PRD.md. Joey built and pushed the foundation (`J1`–`J14`) same night, ahead of the Nov 9 noon target. |
-| Nov 9 | | _(fill in — foundation announcement, start of H1–H5 / A1–A4 / M1–M4 / G2–G3)_ |
-| Nov 10 | | M1–M3 check-in with instructor. |
-| Nov 12 | | M4 check-in; release tested on another computer. |
-| Nov 13 | | Demo rehearsal (10 minutes, every member speaks). |
+| Nov 8 (Sun) | All five (group chat) | Group formed from the OOP10 project groupings. The project requirements PDF and the development plan (M1–M5 due dates) were shared. Members sent their GitHub accounts and emails so they could be added to the repository. Chose the app name and theme (Tapedeck, retro cassette look), the enhancement (favorites and ratings), the sorting algorithm (insertion sort), and the roles in 5.3. |
+| Nov 9 (Mon) | All five (group chat) | Progress review for the Nov 10 deliverables (M1–M3): merged work checked (library saving and loading, sorter, foundation and release configuration) and the remaining tasks listed per member. Agreed to finish the Nov 10 tasks by 9 PM. |
+| Nov 9–10 | Joey, Maddox, Ammaar, Genevieve (group chat) | Maddox to remove the baked-in title, group and menu text from the skin PNG and add the remaining team photos; Ammaar and Genevieve sent their photos for the splash screen. |
+| Nov 12 (Thu) | All five (group chat) | Presentation script shared. Deadlines set: M4 deliverable on Nov 12, voice-overs on Nov 13 at 10 PM, M5 (final video, documentation and repository) on Nov 14. Each member uploads their voice-over to their own folder in the shared Drive. The M4 documentation (`G3_BSCS2A_M4.pdf`) was submitted that night. |
+| Nov 13 (Fri) | All five (group chat) | Agreed that the final presentation is a narrated video, with each member recording a voice-over for their own part of the script; follow-up on the voice-overs. |
+| Nov 14 (Sat) | All five (group chat) | The documentation portfolio (sections 1–9 and appendix) assigned to Sean Caling (Heaven), who accepted. Final submission: repository, portfolio PDF, release ZIP and recorded demonstration. |
 
-## 5.6 Commit history screenshot
-_(Insert a screenshot of GitHub → Insights → Contributors and the commit list here once teammates' commits are in.)_ Joey's foundation currently stands at **14 commits** on `main` (`5199d3d` through `78f0217`), already past the 10-commit minimum per member.
+## 5.6 Commit history
+
+![GitHub Insights – Contributors](screenshots/contributors.png)
+
+*Figure: GitHub → Insights → Contributors (commits to `main`, excluding merge commits).*
+
+Commits per member on `main`, excluding merge commits, counted with `git shortlog -sn --no-merges main` (uses the repository's `.mailmap`):
+
+| Member | GitHub | Commits |
+|---|---|---|
+| Joey Cuison | joeycuison333-stack | 45 |
+| Christian Maddox Rivera (Maddox) | Maddox44907 | 17 |
+| Genevieve Valencia | gdvalenciah | 12 |
+| Sean Caling (Heaven) | SeanC1801 | 12 |
+| Ammaar Azmy | aksilol | 11 |
+
+Every member has at least 10 commits.
+
+**Note on Maddox's count:** GitHub's Contributors page shows only 1 commit for `Maddox44907`. 15 of his 17 commits were made with a misspelled Git email (`rivera.chrsitianmaddox@…` instead of `rivera.christianmaddox@…`), and GitHub only credits a commit to an account when its email matches one linked to that account. The commits themselves are in the history under his name (splash screen, team info, member photos, Canva skin, logo and icon, design concept, credits). The `.mailmap` file maps both emails to him so Git counts them correctly; the history was not rewritten, so no commit IDs changed. His two latest commits already use the correct address.
