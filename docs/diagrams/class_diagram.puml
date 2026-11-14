@@ -1,116 +1,198 @@
-@startuml
-title Tapedeck - UML Class Diagram
-
+@startuml class_diagram
+!pragma layout smetana
+' Tapedeck – UML class diagram (matches the code on main).
+' Render: java -jar plantuml.jar docs/diagrams/class_diagram.puml
 skinparam classAttributeIconSize 0
-skinparam linetype ortho
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam classBackgroundColor #F7F7F7
+skinparam classBorderColor #1F1F8F
+skinparam ArrowColor #333333
 
-package "Core" {
-    abstract class MediaItem {
-        - title : string
-        - artist : string
-        - duration : TimeSpan
-        - filePath : string
-        + IsFavorite : bool
-        + Rating : int
-        + MediaType : string
-        + Extra : string
-        + ToFileLine() : string
-    }
-
-    class AudioItem {
-        - album : string
-        + MediaType : string
-        + Extra : string
-    }
-
-    class VideoItem {
-        - resolution : string
-        + MediaType : string
-        + Extra : string
-    }
-
-    interface IMediaControls {
-        + Play()
-        + Pause()
-        + Stop()
-        + Next()
-        + Previous()
-    }
-
-    class LibrarySorter {
-        + Compare(a, b, key)
-        + InsertionSort(items, key)
-        + BinarySearchByTitle(items, title)
-        + FindFirstContaining(items, text)
-    }
-
-    class MediaFormats {
-        + IsSupported(path)
-        + IsVideoFile(path)
-        + Create(...) : MediaItem
-    }
+interface IMediaControls <<interface>> {
+  +Play()
+  +Pause()
+  +Stop()
+  +Next()
+  +Previous()
 }
 
-package "UI" {
-    class BasePlayerForm {
-        # Playlist : List<MediaItem>
-        # CurrentIndex : int
-        + Play()
-        + Pause()
-        + Stop()
-        + Next()
-        + Previous()
-        + SetVolume(percent)
-        + Seek(position)
-        # SetPlaylist(items)
-        # OnNowPlayingChanged(item)
-    }
+class Form <<WinForms>>
 
-    class TapedeckForm {
-        - SortLibrary(key)
-        + SearchLibrary(text)
-        + ToggleFavorite()
-        + SetRating(stars)
-        - LoadLibraryFromFile()
-        - SaveLibraryToFile()
-        - TrySaveLibrary()
-    }
+class BasePlayerForm {
+  -_libVLC : LibVLC
+  -_player : MediaPlayer
+  #VideoSurface : VideoView
+  #Playlist : List<MediaItem>
+  #CurrentIndex : int
+  +ShuffleEnabled : bool
+  +Repeat : RepeatMode
+  #ElapsedTime : TimeSpan
+  #CurrentItem : MediaItem
+  +Play() <<virtual>>
+  +Pause() <<virtual>>
+  +Stop() <<virtual>>
+  +Next() <<virtual>>
+  +Previous() <<virtual>>
+  +SetVolume(percent : int) <<virtual>>
+  +Seek(position : float) <<virtual>>
+  #AttachVideo(host : Control)
+  #SetPlaylist(items : List<MediaItem>)
+  #ReadMediaItemAsync(path : string) : Task<MediaItem>
+  #OnNowPlayingChanged(item : MediaItem) <<virtual hook>>
+  #ApplyTheme() <<virtual hook>>
+  #SetStatus(text : string) <<virtual hook>>
+  #ShowError(message : string) <<virtual hook>>
+  -PlayNextOrStop()
+  -PickRandomIndex() : int
 }
 
-package "Data" {
-    class LibraryStore {
-        + DefaultPath : string
-        + Save(path, items)
-        + Load(path, skippedLines) : List<MediaItem>
-        + ParseLine(line) : MediaItem
-    }
-
-    class FavoritesStore {
-        + DefaultPath : string
-        + Save(path, items)
-        + Apply(path, items, skippedLines)
-    }
+class TapedeckForm {
+  -tmrElapsed : Timer
+  -menuMain : MenuStrip
+  +Play() <<override>>
+  +Pause() <<override>>
+  +Stop() <<override>>
+  #OnNowPlayingChanged(item) <<override>>
+  #ApplyTheme() <<override>>
+  #SetStatus(text) <<override>>
+  #ShowError(message) <<override>>
+  +ToggleFavorite() <<unique>>
+  +SetRating(stars : int) <<unique>>
+  +SearchLibrary(text : string) <<unique>>
+  +CycleRepeat() <<unique>>
+  -SortLibrary(key : SortKey)
+  -BuildMenu()
+  -RefreshListView()
 }
 
-MediaItem <|-- AudioItem
-MediaItem <|-- VideoItem
+enum RepeatMode {
+  Off
+  All
+  One
+}
+
+abstract class MediaItem <<abstract>> {
+  -_title : string
+  -_artist : string
+  -_duration : TimeSpan
+  -_filePath : string
+  -_rating : int
+  +Title : string <<blank -> Unknown Title>>
+  +Artist : string <<blank -> Unknown Artist>>
+  +Duration : TimeSpan <<negative -> 0>>
+  +FilePath : string
+  +IsFavorite : bool
+  +Rating : int <<clamped 0-5>>
+  +DurationText : string
+  +RatingStars : string
+  +{abstract} MediaType : string
+  +{abstract} Extra : string
+  +{abstract} ExtraLabel : string
+  #MediaItem(title, artist, duration, filePath)
+  +ToFileLine() : string <<virtual>>
+  +ToString() : string <<override>>
+}
+
+class AudioItem {
+  -_album : string
+  +Album : string
+  +MediaType = "Audio" <<override>>
+  +Extra = Album <<override>>
+  +ExtraLabel = "Album" <<override>>
+}
+
+class VideoItem {
+  -_resolution : string
+  +Resolution : string
+  +MediaType = "Video" <<override>>
+  +Extra = Resolution <<override>>
+  +ExtraLabel = "Resolution" <<override>>
+}
+
+class MediaFormats <<static>> {
+  +IsSupported(path) : bool
+  +IsVideoFile(path) : bool
+  +Create(mediaType, title, artist, duration, filePath, extra) : MediaItem
+}
+
+class TimeFormat <<static>> {
+  +ToClock(time : TimeSpan) : string
+}
+
+class LibraryStore <<static>> {
+  +FileName = "Library.txt"
+  +DefaultPath : string
+  +Save(path, items : List<MediaItem>)
+  +Load(path, out skippedLines : int) : List<MediaItem>
+  +ParseLine(line : string) : MediaItem
+}
+
+class FavoritesStore <<static>> {
+  +FileName = "Favorites.txt"
+  +Save(path, items : List<MediaItem>)
+  +Apply(path, items, out skippedLines : int)
+}
+
+class LibrarySorter <<static>> {
+  +Compare(a, b : MediaItem, key : SortKey) : int
+  +InsertionSort(items : List<MediaItem>, key : SortKey)
+  +BinarySearchByTitle(items, title) : int
+  +FindFirstContaining(items, text) : int
+}
+
+enum SortKey {
+  Title
+  Artist
+  AlbumOrResolution
+  Duration
+  Rating
+}
+
+class Theme <<static>> {
+  +BackgroundFile : string
+  +Borderless : bool
+  +colours, fonts, button images
+  +LoadImage(fileName) : Image
+  +EnableDrag(form : Form, handle : Control)
+}
+
+class SplashForm {
+  -_timer : Timer
+  -BuildLayout()
+  -CloseSplash()
+}
+
+class TeamInfo <<static>> {
+  +AppTitle : string
+  +GroupName : string
+  +Section : string
+  +Members : TeamMember[]
+}
+
+class TeamMember {
+  +Name : string
+  +Role : string
+  +PhotoFile : string
+}
 
 IMediaControls <|.. BasePlayerForm
+Form <|-- BasePlayerForm
+Form <|-- SplashForm
 BasePlayerForm <|-- TapedeckForm
-
-TapedeckForm --> LibrarySorter : sorts and searches
-TapedeckForm --> LibraryStore : loads and saves
-TapedeckForm --> FavoritesStore : saves and restores
-TapedeckForm --> MediaFormats : uses indirectly through library loading
-LibraryStore --> MediaFormats : creates media items
-LibrarySorter ..> MediaItem : operates on
-FavoritesStore ..> MediaItem : updates favorite/rating data
+BasePlayerForm --> RepeatMode
+BasePlayerForm o-- "0..*" MediaItem : Playlist
+MediaItem <|-- AudioItem
+MediaItem <|-- VideoItem
+MediaItem ..> TimeFormat
 MediaFormats ..> MediaItem : creates
-
-note right of TapedeckForm
-  Favorites and ratings UI
-  are currently placeholders.
-  Persistence exists in FavoritesStore.
-end note
-
+LibraryStore ..> MediaFormats : ParseLine
+TapedeckForm ..> LibraryStore : save / load
+TapedeckForm ..> FavoritesStore : save / apply
+TapedeckForm ..> LibrarySorter : sort / search
+LibrarySorter ..> SortKey
+TapedeckForm ..> Theme : ApplyTheme
+TapedeckForm ..> SplashForm : About (F1)
+SplashForm ..> TeamInfo
+TeamInfo *-- "1..*" TeamMember
 @enduml
