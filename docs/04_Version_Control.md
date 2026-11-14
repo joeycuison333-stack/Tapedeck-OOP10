@@ -5,7 +5,7 @@
 - **Host:** GitHub, private repository `Tapedeck-OOP10` under the team lead's account.
 - **Repository link:** https://github.com/joeycuison333-stack/Tapedeck-OOP10
 - **Collaborators (write access):** Sean Caling / Heaven (`SeanC1801`), Ammaar Azmy (`aksilol`), Christian Maddox Rivera (`Maddox44907`), Genevieve Valencia (`gdvalenciah`). Owner: Joey Cuison (`joeycuison333-stack`).
-- **Instructor:** Prof. Ulysses Raymond F. Monsale – to be added under Settings → Collaborators.
+- **Instructor:** Prof. Ulysses Raymond F. Monsale – added as a collaborator.
 - **Files:** `README.md`, `PRD.md`, Visual Studio `.gitignore` (`bin/`, `obj/`, `.vs/` and publish output are not committed), `Tapedeck.sln`, `Tapedeck/Tapedeck.csproj`, `docs/`.
 
 ## 5.2 Branching and merging
