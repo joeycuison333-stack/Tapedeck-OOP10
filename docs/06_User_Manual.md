@@ -18,7 +18,7 @@ This manual explains how to install and use Tapedeck to build a library of MP3 a
 | **.NET runtime** | Not required. The release is self-contained and includes the .NET 8 runtime. |
 | **Other software** | None. The VLC playback engine is included in the release. |
 | **Disk space** | About 360 MB after extracting (the ZIP is about 152 MB) |
-| **Display** | 1024 × 680 or larger; tested at 100%, 125% and 200% scaling (see known limitations, `07_Deployment_Guide.md` Section 8.6) |
+| **Display** | 1024 × 680 or larger; tested at 100%, 125% and 200% scaling |
 
 ## 7.2 Installation
 
@@ -135,7 +135,6 @@ The shortcuts below match the final build. They are also shown inside the progra
 | The library cannot be saved | "The library could not be saved." / "No permission to save the library." | Move the Tapedeck folder out of Program Files to Documents or the Desktop. |
 | Skin or team photos do not appear | "Skin not loaded, using plain colours." | Check that the Assets folder is beside `Tapedeck.exe`. |
 | Video or audio does not play | "The VLC files were not found next to the program." | Check that the libvlc folder is beside `Tapedeck.exe`; extract the whole ZIP again. |
-| Elapsed time not visible at 200% scaling | (none) | Known issue B06; use 100% or 125% display scaling until the fix is released. |
 
 ![File moved or deleted message](screenshots/error_missing_file.png)
 

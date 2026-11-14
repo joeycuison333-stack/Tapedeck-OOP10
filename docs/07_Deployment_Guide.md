@@ -82,15 +82,15 @@ The group logo, a cassette tape with a play symbol, was designed in Canva by Chr
 - The self-contained release is large (about 360 MB extracted) because it includes the .NET runtime and the VLC engine.
 - The program is not digitally signed, so Windows SmartScreen may warn on the first start.
 - The library stores file paths; a moved or renamed file must be added again.
-- At 200% display scaling the elapsed time and seek bar are covered (bug B06, fix pending retest).
 - Because the LibVLC engine draws the video directly, no controls or graphics can be placed on top of the video panel.
 
 ## 8.7 Refactoring Done in Milestone 4
 
-As required by guide Section 5.2, the refactoring made in this milestone is recorded with the reason for it. The complete record (R1–R10) is in `03_Development_Log.md`.
+As required by guide Section 5.2, the refactoring made in this milestone is recorded with the reason for it. The complete record (R1–R11) is in `03_Development_Log.md`.
 
 **Table 14. Milestone 4 refactoring**
 
 | No. | Refactoring | Why |
 |---|---|---|
 | R10 | `BasePlayerForm.PrepareEngineAsync()` loads the LibVLC engine on a background thread; `Program.cs` starts it before showing the splash screen and passes it to the main form. The original constructors are kept so the Visual Studio designer still opens the forms. | Fixes TD-01: the engine's 1–2 s load now overlaps with the splash screen instead of delaying the main window. |
+| R11 | `PlaceStatusBar()` was renamed `PlaceSkinControls()` and now places the Now Playing lines, the elapsed time and the seek bar from the skin's coordinates after scaling, and brings the elapsed time and seek bar to the front. | Fixes B06: at 200% scaling the elapsed time and seek bar were covered. |
